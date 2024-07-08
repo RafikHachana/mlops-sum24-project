@@ -1,5 +1,5 @@
 zenml[server]
-apache-airflow
+apache-airflow==2.7.3
 feast
 great_expectations
 dvc
