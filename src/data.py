@@ -2,6 +2,11 @@
 import pandas as pd
 import json
 import gc
+import great_expectations as gx
+from great_expectations.validator.validator import Validator
+from great_expectations.data_context import FileDataContext
+import re
+
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
@@ -216,6 +221,191 @@ def validate_transformed_data(X, y):
     assert y.dtype == 'int', "y should be numeric"
     return X, y
 
+def validate_app_id(validator: Validator):
+    validator.expect_column_values_to_be_unique(column="AppID")
+    validator.expect_column_values_to_match_json_schema(
+        column="AppID",
+        json_schema={
+            "type": "integer",
+            "minimum": 0,
+        },
+    )
+
+def validate_release_date(validator: Validator):
+    col_name = "Release date"
+    # the format is Oct 21, 2008
+    validator.expect_column_values_to_match_regex(
+        column=col_name,
+        regex=r"^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{2}, \d{4}$"
+    )
+    # it should be a valid date
+    validator.expect_column_values_to_match_like_pattern(
+        column=col_name,
+        like_pattern="%\b-%m-\%\d"
+    )
+    validator.expect_column_values_to_not_be_null(col_name)
+    
+def validate_user_score(validator: Validator):
+    col_name = "User score"
+    validator.expect_column_values_to_be_between(
+        column=col_name,
+        min_value=0,
+        max_value=100
+    )
+    validator.expect_column_values_to_not_be_null(col_name)
+
+def validate_metacritic_score(validator: Validator):
+    col_name = 'Metacritic score'
+    validator.expect_column_values_to_be_between(
+        column=col_name,
+        min_value=0,
+        max_value=100
+    )
+    validator.expect_column_values_to_not_be_null(col_name)
+
+def validate_support_url(validator: Validator):
+    col_name = 'Support url'
+
+    validator.expect_column_values_to_match_like_pattern(
+        column=col_name,
+        like_pattern="http%://%"
+    )
+
+def validate_metacritic_url(validator: Validator):
+    col_name = 'Metacritic url'
+
+    validator.expect_column_values_to_match_like_pattern(
+        column=col_name,
+        like_pattern="http%://%"
+    )
+
+def validate_support_email(validator: Validator):
+    col_name = 'Support email'
+
+    validator.expect_column_values_to_match_like_pattern(
+        column=col_name,
+        like_pattern="%@%.%"
+    )
+
+def validate_estimated_owners(validator: Validator):
+    col_name = 'Estimated owners'
+    # use regex to match the pattern
+    validator.expect_column_values_to_match_regex(
+        column=col_name,
+        regex=r"^\d+-\d+$"
+    )
+    validator.expect_column_values_to_not_be_null(col_name)
+
+def validate_website(validator: Validator):
+    col_name = 'Website'
+    validator.expect_column_values_to_match_like_pattern(
+        column=col_name,
+        like_pattern="http%://%"
+    )
+
+def validate_peak_ccu(validator: Validator):
+    col_name = 'Peak CCU'
+    validator.expect_column_values_to_be_between(
+        column=col_name,
+        min_value=0,
+        max_value=100_000_000
+    )
+    validator.expect_column_values_to_not_be_null(col_name)
+
+def validate_required_age(validator: Validator):
+    col_name = 'Required age'
+    validator.expect_column_values_to_be_between(
+        column=col_name,
+        min_value=0,
+        max_value=100
+    )
+    validator.expect_column_values_to_not_be_null(col_name)
+
+def validate_price(validator: Validator):
+    col_name = 'Price'
+    validator.expect_column_values_to_be_between(
+        column=col_name,
+        min_value=0,
+        max_value=1_000
+    )
+    validator.expect_column_values_to_not_be_null(col_name)
+
+def validate_dlc_count(validator: Validator):
+    col_name = 'DLC count'
+    validator.expect_column_values_to_be_between(
+        column=col_name,
+        min_value=0,
+        max_value=100
+    )
+    validator.expect_column_values_to_not_be_null(col_name)
+
+def validate_supported_languages(validator: Validator):
+    col_name = 'Supported languages'
+    # they are in the format: "['English', 'French', ...]"
+    validator.expect_column_values_to_match_regex(
+        column=col_name,
+        regex="^\[(?:\'[^']*\')(?:\s*,\s*\'[^']*\')*\s*\]$"
+    )
+    validator.expect_column_values_to_not_be_null(col_name)
+
+def validate_full_audio_languages(validator: Validator):
+    col_name = 'Full audio languages'
+    # they are in the format: "['English', 'French', ...]"
+    validator.expect_column_values_to_match_regex(
+        column=col_name,
+        regex="^\[(?:\'[^']*\')(?:\s*,\s*\'[^']*\')*\s*\]$"
+    )
+    validator.expect_column_values_to_not_be_null(col_name)
+
+
+def validate_initial_data(df):
+    try:
+        context = gx.get_context(context_root_dir = "../services/gx")
+    except:
+        context = FileDataContext(context_root_dir = "../services")
+    
+    ds1 = context.sources.add_or_update_pandas(name="my_pandas_ds")
+    da1 = ds1.add_dataframe_asset(name="playtime_asset")
+    batch_request = da1.build_batch_request(dataframe=df)
+    # Read a single data file
+    # da1 = ds1.add_csv_asset(
+    #     name = "asset01",
+    #     filepath_or_buffer="../data/sample.csv")
+    
+    # Create an Expectation Suite
+    expectation_suite_name = "playtime_expectations"
+    context.add_or_update_expectation_suite(expectation_suite_name)
+
+    # Create a Validator
+    validator = context.get_validator(
+        batch_request=batch_request,
+        expectation_suite_name=expectation_suite_name
+    )
+    validator_funcs = [validate_app_id, validate_release_date, validate_user_score, validate_metacritic_score, validate_support_url, validate_metacritic_url, validate_support_email, validate_estimated_owners, validate_website, validate_peak_ccu, validate_required_age, validate_price, validate_dlc_count, validate_supported_languages, validate_full_audio_languages]
+    for func in validator_funcs:
+        func(validator)
+
+    # Save the expectation suite
+    validator.save_expectation_suite(discard_failed_expectations=False)
+
+    # Create a checkpoint
+    checkpoint_name = "playtime_checkpoint"
+    checkpoint = context.add_or_update_checkpoint(
+        name=checkpoint_name,
+        validations=[
+            {
+                "batch_request": batch_request,
+                "expectation_suite_name": expectation_suite_name,
+            },
+        ],
+    )
+
+    # Run the checkpoint
+    checkpoint_result = checkpoint.run()
+    assert checkpoint_result.success, "Checkpoint validation failed!"
+
+
+
 
 config_path = os.path.join(
     os.path.dirname(os.path.dirname(__file__)),
@@ -331,8 +521,13 @@ def validate_initial_data():
     #     max_value=100
     # )
 
-    ex3 = validator.expect_column_values_to_be_unique(column = 'AppID', meta = {"dimension": 'Uniqueness'})
-    print(ex3)
+    validator_funcs = [validate_app_id, validate_release_date, validate_user_score, validate_metacritic_score, validate_support_url, validate_metacritic_url, validate_support_email, validate_estimated_owners, validate_website, validate_peak_ccu, validate_required_age, validate_price, validate_dlc_count, validate_supported_languages, validate_full_audio_languages]
+    for func in validator_funcs:
+        print(func.__name__)
+        func(validator)
+
+    # ex3 = validator.expect_column_values_to_be_unique(column = 'AppID', meta = {"dimension": 'Uniqueness'})
+    # print(ex3)
 
     # Save the expectation suite
     validator.save_expectation_suite(discard_failed_expectations=False)
