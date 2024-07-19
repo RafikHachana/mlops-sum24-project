@@ -2,6 +2,13 @@
 import pandas as pd
 import json
 import gc
+import os
+import pandas as pd
+import hydra
+from omegaconf import DictConfig
+import requests
+from zipfile import ZipFile
+from io import BytesIO
 
 def transform_data(df):
     # Your data transformation code
@@ -206,15 +213,9 @@ def validate_transformed_data(X, y):
     assert y.dtype == 'int', "y should be numeric"
     return X, y
 
-import os
-import pandas as pd
-import hydra
-from omegaconf import DictConfig
-import requests
-from zipfile import ZipFile
-from io import BytesIO
 
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+# os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 @hydra.main(config_path="../configs", config_name="config")
 def sample_data(cfg: DictConfig) -> None:
@@ -241,12 +242,64 @@ def sample_data(cfg: DictConfig) -> None:
     sample_df = df.sample(frac=sample_size, random_state=1)
 
     # Ensure the sample path exists
-    sample_path = cfg.dataset.sample_path
+    sample_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        cfg.dataset.sample_path
+    )
+    #cfg.dataset.sample_path
     os.makedirs(os.path.dirname(sample_path), exist_ok=True)
 
     # Save the sample data
     sample_df.to_csv(sample_path, index=False)
     print(f"Sampled data saved to {sample_path}")
 
+
+from services.gx import get_context
+from great_expectations.core.batch import BatchRequest
+
+def validate_initial_data(data: pd.DataFrame, suite_name="initial_data_expectations"):
+    context = get_context()
+
+    # Create an expectation suite
+    suite = context.create_expectation_suite(expectation_suite_name=suite_name, overwrite_existing=True)
+
+    # Define the expectations
+    validator = context.get_validator(batch_request=BatchRequest(
+        datasource_name="my_datasource",
+        data_connector_name="default_inferred_data_connector_name",
+        data_asset_name="sampled_data"
+    ), expectation_suite_name=suite_name)
+
+    # Example expectations
+    validator.expect_column_values_to_be_between(
+    column="Metacritic score",
+    min_value=0,
+    max_value=100
+    )
+
+    # Example for "User score"
+    validator.expect_column_values_to_be_between(
+        column="User score",
+        min_value=0,
+        max_value=100
+    )
+
+    # Save the expectation suite
+    validator.save_expectation_suite(discard_failed_expectations=False)
+
+    # Validate the data
+    validation_result = validator.validate()
+
+    return validation_result
+
+
 if __name__ == "__main__":
-    sample_data()
+    # sample_data()
+    # sample_path = os.path.join(
+    #     os.path.dirname(os.path.dirname(__file__)),
+    #     "data/samples/sample.csv"
+    # )
+    # df = pd.read_csv(sample_path)
+
+    # validate_initial_data(df)
+    pass
