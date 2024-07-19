@@ -1,62 +1,77 @@
-import pytest
+import sys
 import os
-import requests
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+import pytest
+from unittest.mock import patch, MagicMock, mock_open
 import pandas as pd
-from omegaconf import DictConfig
-from unittest import mock
 from io import BytesIO
+import requests
 from zipfile import ZipFile
-from src.data import sample_data  # assuming the function is in a file named sample_script.py
+from omegaconf import DictConfig
+from tqdm import tqdm
+import src.data
 
-# Sample configuration for testing
-sample_cfg = DictConfig({
-    'dataset': {
-        'url': 'http://example.com/data.zip',
-        'sample_size': 0.1,
-        'sample_path': 'data/sample.csv'
-    }
-})
+from src.data import sample_data
 
-# Mock data for testing
-mock_csv_data = "column1,column2\nvalue1,value2\nvalue3,value4"
-mock_zip_data = BytesIO()
-with ZipFile(mock_zip_data, 'w') as zf:
-    zf.writestr('games.csv', mock_csv_data)
-mock_zip_data.seek(0)
+@patch('src.data.requests.get')
+@patch('src.data.tqdm')
+@patch('src.data.ZipFile')
+@patch('src.data.os.makedirs')
+@patch('builtins.open', new_callable=mock_open)
+def test_sample_data(mock_open, mock_makedirs, mock_zipfile, mock_tqdm, mock_get):
+    # Prepare mock response for requests.get
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.headers = {'content-length': '100'}
+    mock_response.iter_content = lambda chunk_size: [b'x' * chunk_size for _ in range(10)]
+    mock_get.return_value = mock_response
 
-@pytest.fixture
-def mock_requests_get(mocker):
-    return mocker.patch('requests.get')
+    # Prepare mock ZipFile
+    mock_zip = MagicMock()
+    mock_zipfile.return_value.__enter__.return_value = mock_zip
+    mock_zip.infolist.return_value = [MagicMock(filename='games.csv')]
+    mock_zip.open.return_value = BytesIO(b"column1,column2\nvalue1,value2")
 
-def test_download_failure(mock_requests_get):
-    mock_requests_get.return_value.status_code = 404
-
-    with pytest.raises(Exception) as excinfo:
-        sample_data(sample_cfg)
-    
-    assert "Failed to download file" in str(excinfo.value)
-
-def test_successful_data_sampling(mocker, mock_requests_get, tmpdir):
-    # Mock the successful request
-    mock_requests_get.return_value.status_code = 200
-    mock_requests_get.return_value.content = mock_zip_data.getvalue()
-
-    # Mock os.path.dirname and os.makedirs
-    mocker.patch('os.path.dirname', return_value=str(tmpdir))
-    mocker.patch('os.makedirs')
-
-    # Mock the path to save the sampled data
-    sample_cfg.dataset.sample_path = os.path.join(tmpdir, 'sample.csv')
+    # Mock configuration
+    cfg = DictConfig({
+        'dataset': {
+            'url': 'http://example.com/data.zip',
+            'sample_size': 0.5,
+            'sample_path': 'data/sample.csv'
+        }
+    })
 
     # Run the function
-    sample_data(sample_cfg)
+    with patch('pandas.read_csv', return_value=pd.DataFrame({'column1': ['value1'], 'column2': ['value2']})):
+        sample_data(cfg)
 
-    # Verify that the data was saved correctly
-    saved_sample_path = sample_cfg.dataset.sample_path
-    assert os.path.exists(saved_sample_path)
+    # Assertions
+    mock_get.assert_called_once_with('http://example.com/data.zip', stream=True)
+    mock_tqdm.assert_called_once()
+    sample_path = os.path.join(os.path.dirname(os.path.dirname(src.data.__file__)), cfg['dataset']['sample_path'])
+    mock_makedirs.assert_called_once_with(os.path.dirname(sample_path), exist_ok=True)
+    assert mock_zip.open.called
+    assert mock_zip.infolist.called
 
-    # Verify the content of the saved file
-    saved_df = pd.read_csv(saved_sample_path)
-    assert not saved_df.empty
-    assert list(saved_df.columns) == ["column1", "column2"]
+@patch('src.data.requests.get')
+def test_download_failure(mock_get):
+    # Prepare mock response for requests.get
+    mock_response = MagicMock()
+    mock_response.status_code = 404
+    mock_get.return_value = mock_response
 
+    # Mock configuration
+    cfg = DictConfig({
+        'dataset': {
+            'url': 'http://example.com/data.zip',
+            'sample_size': 0.5,
+            'sample_path': 'data/sample.csv'
+        }
+    })
+
+    # Run the function and expect an exception
+    with pytest.raises(Exception) as excinfo:
+        sample_data(cfg)
+
+    assert str(excinfo.value) == 'Failed to download file from http://example.com/data.zip'
+    mock_get.assert_called_once_with('http://example.com/data.zip', stream=True)
