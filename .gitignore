@@ -12,6 +12,8 @@ __pycache__/
 *.pid
 *.db
 
+datastore
+
 # Distribution / packaging
 .Python
 build/
