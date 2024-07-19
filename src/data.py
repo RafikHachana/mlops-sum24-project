@@ -3,12 +3,15 @@ import pandas as pd
 import json
 import gc
 import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 import pandas as pd
 import hydra
 from omegaconf import DictConfig
 import requests
 from zipfile import ZipFile
 from io import BytesIO
+from tqdm import tqdm
 
 def transform_data(df):
     # Your data transformation code
@@ -214,19 +217,37 @@ def validate_transformed_data(X, y):
     return X, y
 
 
+config_path = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)),
+    'configs'
+)
 
-# os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
-@hydra.main(config_path="../configs", config_name="config")
-def sample_data(cfg: DictConfig) -> None:
+# @hydra.main(config_path=config_path, config_name="config")
+def sample_data() -> None:
     # Download the zip file from the URL specified in the config
-    data_url = cfg.dataset.url
-    response = requests.get(data_url)
+    # data_url = cfg.dataset.url
+    data_url = "https://drive.usercontent.google.com/u/0/uc?id=1aw-Xu5T4UW6fr7icR7o30zPlagii9IV4&export=download"
+    print(f"Downloading data from {data_url}")
+    response = requests.get(data_url, stream=True)
+
     if response.status_code != 200:
         raise Exception(f"Failed to download file from {data_url}")
 
+    # Get the total file size
+    total_size = int(response.headers.get('content-length', 0))
+
+    # Initialize the progress bar
+    with tqdm(total=total_size, unit='B', unit_scale=True, desc=data_url.split('/')[-1]) as pbar:
+        buffer = BytesIO()
+        for chunk in response.iter_content(1024):
+            buffer.write(chunk)
+            pbar.update(len(chunk))
+
     # Extract the zip file
-    with ZipFile(BytesIO(response.content)) as thezip:
+    buffer.seek(0)
+
+    # Extract the zip file
+    with ZipFile(buffer) as thezip:
         # List all files in the zip
         zip_info_list = thezip.infolist()
         print("Files in the zip archive:")
@@ -234,17 +255,20 @@ def sample_data(cfg: DictConfig) -> None:
             print(zip_info.filename)
 
         # Extract the specific csv file
-        with thezip.open('games.csv') as thefile:
+        # TODO: Fix
+        with thezip.open('small.csv') as thefile:
             df = pd.read_csv(thefile)
 
     # Sample the data
-    sample_size = cfg.dataset.sample_size
+    # sample_size = cfg.dataset.sample_size
+    sample_size = 0.2
     sample_df = df.sample(frac=sample_size, random_state=1)
 
     # Ensure the sample path exists
     sample_path = os.path.join(
         os.path.dirname(os.path.dirname(__file__)),
-        cfg.dataset.sample_path
+        "data/samples/sample.csv"
+        # cfg.dataset.sample_path
     )
     #cfg.dataset.sample_path
     os.makedirs(os.path.dirname(sample_path), exist_ok=True)
@@ -254,52 +278,102 @@ def sample_data(cfg: DictConfig) -> None:
     print(f"Sampled data saved to {sample_path}")
 
 
-from services.gx import get_context
 from great_expectations.core.batch import BatchRequest
+from great_expectations.data_context import FileDataContext
 
-def validate_initial_data(data: pd.DataFrame, suite_name="initial_data_expectations"):
-    context = get_context()
+
+# @hydra.main(config_path=config_path, config_name="config")
+def validate_initial_data():
+    # context = get_context()
+
+    context_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        "services/gx"
+    )
+
+    context = FileDataContext(context_root_dir=context_path)
+
+    ds1 = context.sources.add_or_update_pandas(name="my_pandas_ds")
+
+    sample_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        "data/samples/sample.csv"
+        # cfg.dataset.sample_path
+    )
+
+    da1 = ds1.add_csv_asset(
+        name = "sample",
+        filepath_or_buffer=sample_path
+    )
+
+    suite_name = "sample_suite"
 
     # Create an expectation suite
-    suite = context.create_expectation_suite(expectation_suite_name=suite_name, overwrite_existing=True)
+    # suite = context.create_expectation_suite(expectation_suite_name=suite_name, overwrite_existing=True)
+
+    context.add_or_update_expectation_suite(suite_name)
 
     # Define the expectations
-    validator = context.get_validator(batch_request=BatchRequest(
-        datasource_name="my_datasource",
-        data_connector_name="default_inferred_data_connector_name",
-        data_asset_name="sampled_data"
-    ), expectation_suite_name=suite_name)
+    batch_request = da1.build_batch_request()
+    validator = context.get_validator(batch_request=batch_request, expectation_suite_name=suite_name)
 
     # Example expectations
-    validator.expect_column_values_to_be_between(
-    column="Metacritic score",
-    min_value=0,
-    max_value=100
-    )
+    # validator.expect_column_values_to_be_between(
+    # column="Metacritic score",
+    # min_value=0,
+    # max_value=100
+    # )
 
     # Example for "User score"
-    validator.expect_column_values_to_be_between(
-        column="User score",
-        min_value=0,
-        max_value=100
-    )
+    # validator.expect_column_values_to_be_between(
+    #     column="User score",
+    #     min_value=0,
+    #     max_value=100
+    # )
+
+    ex3 = validator.expect_column_values_to_be_unique(column = 'AppID', meta = {"dimension": 'Uniqueness'})
+    print(ex3)
 
     # Save the expectation suite
     validator.save_expectation_suite(discard_failed_expectations=False)
 
-    # Validate the data
-    validation_result = validator.validate()
+    checkpoint = context.add_or_update_checkpoint(
+        name = "initial_data_validation_checkpoint",
+        validations=[
+            {
+                "batch_request":batch_request,
+                "expectation_suite_name" : suite_name
+            }
+        ]
+    )
+    
+    checkpoint_result = checkpoint.run()
 
-    return validation_result
+    return checkpoint_result.success
+
+
+def run_checkpoint():
+    context_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        "services/gx"
+    )
+
+    context = FileDataContext(context_root_dir=context_path)
+
+    checkpoint = context.get_checkpoint("initial_data_validation_checkpoint")
+
+    checkpoint_result = checkpoint.run()
+
+    return checkpoint_result.success
 
 
 if __name__ == "__main__":
     # sample_data()
-    # sample_path = os.path.join(
-    #     os.path.dirname(os.path.dirname(__file__)),
-    #     "data/samples/sample.csv"
-    # )
-    # df = pd.read_csv(sample_path)
+    sample_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        "data/samples/sample.csv"
+    )
+    df = pd.read_csv(sample_path)
+    validate_initial_data()
+    result = run_checkpoint()
 
-    # validate_initial_data(df)
-    pass
