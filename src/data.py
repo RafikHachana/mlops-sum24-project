@@ -7,6 +7,16 @@ from great_expectations.validator.validator import Validator
 from great_expectations.data_context import FileDataContext
 import re
 
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+import pandas as pd
+import hydra
+from omegaconf import DictConfig
+import requests
+from zipfile import ZipFile
+from io import BytesIO
+from tqdm import tqdm
 
 def transform_data(df):
     # Your data transformation code
@@ -394,4 +404,171 @@ def validate_initial_data(df):
     checkpoint_result = checkpoint.run()
     assert checkpoint_result.success, "Checkpoint validation failed!"
 
+
+
+
+config_path = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)),
+    'configs'
+)
+
+# @hydra.main(config_path=config_path, config_name="config")
+def sample_data() -> None:
+    # Download the zip file from the URL specified in the config
+    # data_url = cfg.dataset.url
+    data_url = "https://drive.usercontent.google.com/u/0/uc?id=1aw-Xu5T4UW6fr7icR7o30zPlagii9IV4&export=download"
+    print(f"Downloading data from {data_url}")
+    response = requests.get(data_url, stream=True)
+
+    if response.status_code != 200:
+        raise Exception(f"Failed to download file from {data_url}")
+
+    # Get the total file size
+    total_size = int(response.headers.get('content-length', 0))
+
+    # Initialize the progress bar
+    with tqdm(total=total_size, unit='B', unit_scale=True, desc=data_url.split('/')[-1]) as pbar:
+        buffer = BytesIO()
+        for chunk in response.iter_content(1024):
+            buffer.write(chunk)
+            pbar.update(len(chunk))
+
+    # Extract the zip file
+    buffer.seek(0)
+
+    # Extract the zip file
+    with ZipFile(buffer) as thezip:
+        # List all files in the zip
+        zip_info_list = thezip.infolist()
+        print("Files in the zip archive:")
+        for zip_info in zip_info_list:
+            print(zip_info.filename)
+
+        # Extract the specific csv file
+        # TODO: Fix
+        with thezip.open('small.csv') as thefile:
+            df = pd.read_csv(thefile)
+
+    # Sample the data
+    # sample_size = cfg.dataset.sample_size
+    sample_size = 0.2
+    sample_df = df.sample(frac=sample_size, random_state=1)
+
+    # Ensure the sample path exists
+    sample_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        "data/samples/sample.csv"
+        # cfg.dataset.sample_path
+    )
+    #cfg.dataset.sample_path
+    os.makedirs(os.path.dirname(sample_path), exist_ok=True)
+
+    # Save the sample data
+    sample_df.to_csv(sample_path, index=False)
+    print(f"Sampled data saved to {sample_path}")
+
+
+from great_expectations.core.batch import BatchRequest
+from great_expectations.data_context import FileDataContext
+
+
+# @hydra.main(config_path=config_path, config_name="config")
+def validate_initial_data():
+    # context = get_context()
+
+    context_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        "services/gx"
+    )
+
+    context = FileDataContext(context_root_dir=context_path)
+
+    ds1 = context.sources.add_or_update_pandas(name="my_pandas_ds")
+
+    sample_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        "data/samples/sample.csv"
+        # cfg.dataset.sample_path
+    )
+
+    da1 = ds1.add_csv_asset(
+        name = "sample",
+        filepath_or_buffer=sample_path
+    )
+
+    suite_name = "sample_suite"
+
+    # Create an expectation suite
+    # suite = context.create_expectation_suite(expectation_suite_name=suite_name, overwrite_existing=True)
+
+    context.add_or_update_expectation_suite(suite_name)
+
+    # Define the expectations
+    batch_request = da1.build_batch_request()
+    validator = context.get_validator(batch_request=batch_request, expectation_suite_name=suite_name)
+
+    # Example expectations
+    # validator.expect_column_values_to_be_between(
+    # column="Metacritic score",
+    # min_value=0,
+    # max_value=100
+    # )
+
+    # Example for "User score"
+    # validator.expect_column_values_to_be_between(
+    #     column="User score",
+    #     min_value=0,
+    #     max_value=100
+    # )
+
+    validator_funcs = [validate_app_id, validate_release_date, validate_user_score, validate_metacritic_score, validate_support_url, validate_metacritic_url, validate_support_email, validate_estimated_owners, validate_website, validate_peak_ccu, validate_required_age, validate_price, validate_dlc_count, validate_supported_languages, validate_full_audio_languages]
+    for func in validator_funcs:
+        print(func.__name__)
+        func(validator)
+
+    # ex3 = validator.expect_column_values_to_be_unique(column = 'AppID', meta = {"dimension": 'Uniqueness'})
+    # print(ex3)
+
+    # Save the expectation suite
+    validator.save_expectation_suite(discard_failed_expectations=False)
+
+    checkpoint = context.add_or_update_checkpoint(
+        name = "initial_data_validation_checkpoint",
+        validations=[
+            {
+                "batch_request":batch_request,
+                "expectation_suite_name" : suite_name
+            }
+        ]
+    )
+    
+    checkpoint_result = checkpoint.run()
+
+    return checkpoint_result.success
+
+
+def run_checkpoint():
+    context_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        "services/gx"
+    )
+
+    context = FileDataContext(context_root_dir=context_path)
+
+    checkpoint = context.get_checkpoint("initial_data_validation_checkpoint")
+
+    checkpoint_result = checkpoint.run()
+
+    return checkpoint_result.success
+
+
+if __name__ == "__main__":
+    # sample_data()
+    sample_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        "data/samples/sample.csv"
+    )
+    df = pd.read_csv(sample_path)
+    validate_initial_data()
+    result = run_checkpoint()
 

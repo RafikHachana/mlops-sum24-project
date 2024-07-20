@@ -1,97 +1,108 @@
-from datetime import datetime
-
 from airflow import DAG
-from airflow.decorators import task
-from airflow.operators.bash import BashOperator
-
-from datetime import datetime, timedelta
-from airflow import DAG
-from airflow.operators.python import PythonOperator
+from airflow.operators.python_operator import PythonOperator
 from airflow.utils.dates import days_ago
-from datetime import datetime, timedelta
-from airflow import DAG
-from airflow.utils.dates import days_ago
-from airflow.models import Variable
+import os
+# import sys
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import subprocess
+import sys
 import yaml
 
-# Import custom functions defined in phase 1
-from helpers.data_extract_dag_build import extract_sample, validate_sample, version_sample, load_sample
+# Ensure the path is correct for the project imports
+sys.path.append("/home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project")
 
-# Default arguments for the DAG
+from src.data import sample_data, validate_initial_data, run_checkpoint
+
+# Define default arguments
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'email_on_failure': False,
-    'email_on_retry': False,
+    'start_date': days_ago(1),
     'retries': 1,
-    'retry_delay': timedelta(minutes=1),
 }
 
 # Define the DAG
 dag = DAG(
-    'data_extract_pipeline',
+    'data_extract_dag',
     default_args=default_args,
-    description='A pipeline to extract, validate, version, and load data',
-    schedule_interval=timedelta(minutes=5),
-    start_date=days_ago(1),
+    description='A simple data extraction and validation DAG',
+    schedule_interval='*/30 * * * *',
     catchup=False,
 )
 
-def extract(**kwargs):
-    data = extract_sample()
-    # Push the extracted data to XCom
-    kwargs['ti'].xcom_push(key='extracted_data', value=data)
+def extract_data(**kwargs):
+    # from hydra import initialize, compose
+    # initialize(config_path="../configs", job_name="sample_data_job")
+    cfg = compose(config_name="config")
+    sample_df = sample_data()
+    kwargs['ti'].xcom_push(key='sample_df', value=sample_df)
 
-def validate(**kwargs):
-    # Pull the extracted data from XCom
-    data = kwargs['ti'].xcom_pull(key='extracted_data', task_ids='extract_data')
-    validated_data = validate_sample(data)
-    # Push the validated data to XCom
-    kwargs['ti'].xcom_push(key='validated_data', value=validated_data)
+def validate_data(**kwargs):
+    sample_df = kwargs['ti'].xcom_pull(key='sample_df', task_ids='extract_data')
+    validation_result = validate_initial_data(sample_df)
+    if not validation_result["success"]:
+        raise ValueError("Data validation failed.")
 
-def version(**kwargs):
-    # Pull the validated data from XCom
-    data = kwargs['ti'].xcom_pull(key='validated_data', task_ids='validate_data')
-    version_info = version_sample(data)
-    # Push the version info to XCom
-    kwargs['ti'].xcom_push(key='version_info', value=version_info)
+def version_data(**kwargs):
+    # sample_df = kwargs['ti'].xcom_pull(key='sample_df', task_ids='extract_data')
+    # Save the sample_df to CSV file
+    sample_path = '/home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/data/samples/sample.csv'
+    # sample_df.to_csv(sample_path, index=False)
+    
+    # Add and commit the data version using DVC
+    subprocess.run(['dvc', 'add', sample_path], check=True)
+    subprocess.run(['dvc', 'commit', sample_path], check=True)
+    
+    # Update data_version.yaml
+    version_file = '/home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/configs/data_version.yaml'
+    with open(version_file, 'r') as f:
+        version_data = yaml.safe_load(f)
+    
+    version_data['version'] = version_data.get('version', 0) + 1
+    
+    with open(version_file, 'w') as f:
+        yaml.safe_dump(version_data, f)
 
-def load(**kwargs):
-    # Pull the version info from XCom
-    version_info = kwargs['ti'].xcom_pull(key='version_info', task_ids='version_data')
-    load_sample(version_info)
-    # Update the version number in the config file
-    with open('./configs/data_version.yaml', 'w') as file:
-        yaml.dump({'version': version_info['version']}, file)
+def load_data(**kwargs):
+    sample_path = os.path.join(os.path.dirname(__file__), '../data/sample.csv')
+    # Push the data to remote storage
+    subprocess.run(['dvc', 'push'], check=True)
 
-# Define tasks
-extract_task = PythonOperator(
-    task_id='extract_data',
-    python_callable=extract,
+
+def validate_and_run_checkpoint():
+    validate_initial_data()
+    if not run_checkpoint():
+        raise Exception("Checkpoint failed!")
+
+# Define the tasks
+t1 = PythonOperator(
+    task_id='sample_data',
+    python_callable=sample_data,
     provide_context=True,
     dag=dag,
 )
 
-validate_task = PythonOperator(
-    task_id='validate_data',
-    python_callable=validate,
+t2 = PythonOperator(
+    task_id='validate_initial_data',
+    python_callable=validate_and_run_checkpoint,
     provide_context=True,
     dag=dag,
 )
 
-version_task = PythonOperator(
+t3 = PythonOperator(
     task_id='version_data',
-    python_callable=version,
+    python_callable=version_data,
     provide_context=True,
     dag=dag,
 )
 
-load_task = PythonOperator(
+t4 = PythonOperator(
     task_id='load_data',
-    python_callable=load,
+    python_callable=load_data,
     provide_context=True,
     dag=dag,
 )
 
-# Set up dependencies
-extract_task >> validate_task >> version_task >> load_task
+# Set the task dependencies
+t1 >> t2 >> t3 >> t4
+
