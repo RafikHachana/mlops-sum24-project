@@ -13,6 +13,8 @@ __pycache__/
 *.db
 src/outputs/
 datastore
+.vscode
+outputs
 
 # Distribution / packaging
 .Python
