@@ -1,12 +1,17 @@
 
+from airflow.models import Variable
+
 import pandas as pd
 from typing_extensions import Tuple, Annotated
 from zenml import step, pipeline, ArtifactConfig
-from data import transform_data, extract_data, load_features, validate_transformed_data
-from utils import get_sample_version
+import sys
 import os
 
-BASE_PATH = os.path.expandvars("$PROJECTPATH")
+from data import transform_data, extract_data, load_features, validate_features
+
+# BASE_PATH = os.path.expandvars("$PROJECTPATH")
+BASE_PATH = 'data/games.csv'
+PROJECT_ROOT = Variable.get("PROJECT_ROOT")
 
 @step(enable_cache=False)
 def extract()-> Tuple[
@@ -20,7 +25,7 @@ def extract()-> Tuple[
                                        tags=["data_preparation"])]
                     ]:
     
-    df, version = extract_data(BASE_PATH)
+    df, version = extract_data(PROJECT_ROOT)
 
     return df, version
 
@@ -50,7 +55,7 @@ def validate(X:pd.DataFrame,
                                            tags=["data_preparation"])]
                                     ]:
 
-    X, y = validate_transformed_data(X, y)
+    X, y = validate_features(X, y)
     
     return X, y
 
