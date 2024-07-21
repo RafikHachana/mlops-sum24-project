@@ -18,6 +18,8 @@ from zipfile import ZipFile
 from io import BytesIO
 from tqdm import tqdm
 
+URL_REGEX = r"^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&//=]*)$"
+
 def transform_data(df):
     # Your data transformation code
 
@@ -223,25 +225,19 @@ def validate_transformed_data(X, y):
 
 def validate_app_id(validator: Validator):
     validator.expect_column_values_to_be_unique(column="AppID")
-    validator.expect_column_values_to_match_json_schema(
+    validator.expect_column_values_to_be_between(
         column="AppID",
-        json_schema={
-            "type": "integer",
-            "minimum": 0,
-        },
+        min_value=0,
+        max_value=1_000_000
     )
+    validator.expect_column_values_to_not_be_null("AppID")
 
 def validate_release_date(validator: Validator):
     col_name = "Release date"
     # the format is Oct 21, 2008
     validator.expect_column_values_to_match_regex(
         column=col_name,
-        regex=r"^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{2}, \d{4}$"
-    )
-    # it should be a valid date
-    validator.expect_column_values_to_match_like_pattern(
-        column=col_name,
-        like_pattern="%\b-%m-\%\d"
+        regex="^(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{2}, \d{4}$"
     )
     validator.expect_column_values_to_not_be_null(col_name)
     
@@ -265,26 +261,24 @@ def validate_metacritic_score(validator: Validator):
 
 def validate_support_url(validator: Validator):
     col_name = 'Support url'
-
-    validator.expect_column_values_to_match_like_pattern(
+    validator.expect_column_values_to_match_regex(
         column=col_name,
-        like_pattern="http%://%"
+        regex=URL_REGEX
     )
 
 def validate_metacritic_url(validator: Validator):
     col_name = 'Metacritic url'
-
-    validator.expect_column_values_to_match_like_pattern(
+    
+    validator.expect_column_values_to_match_regex(
         column=col_name,
-        like_pattern="http%://%"
+        regex=URL_REGEX
     )
 
 def validate_support_email(validator: Validator):
     col_name = 'Support email'
-
-    validator.expect_column_values_to_match_like_pattern(
+    validator.expect_column_values_to_match_regex(
         column=col_name,
-        like_pattern="%@%.%"
+        regex=r"^.+@.+\..+$"
     )
 
 def validate_estimated_owners(validator: Validator):
@@ -298,9 +292,9 @@ def validate_estimated_owners(validator: Validator):
 
 def validate_website(validator: Validator):
     col_name = 'Website'
-    validator.expect_column_values_to_match_like_pattern(
+    validator.expect_column_values_to_match_regex(
         column=col_name,
-        like_pattern="http%://%"
+        regex=URL_REGEX
     )
 
 def validate_peak_ccu(validator: Validator):
