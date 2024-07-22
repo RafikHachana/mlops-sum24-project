@@ -24,6 +24,25 @@ from sklearn.model_selection import train_test_split
 import zenml
 
 
+def load_features_training(name, version, size = 1):
+    client = Client()
+    l = client.list_artifact_versions(name = name, tag = version, sort_by="version").items
+    print(l)
+    l.reverse
+
+    df = client.get_artifact_version('22ff69f5-73e5-4f30-94d5-b71127370f6d').load()
+    df = df.sample(frac = size, random_state = 88)
+
+    print("size of df is ", df.shape)
+    print("df columns: ", df.columns)
+
+    X = df[df.columns[:-1]]
+    y = df[df.columns[-1]]
+
+    print("shapes of X,y = ", X.shape, y.shape)
+
+    return X, y
+
 
 def extract_data_training(cfg):
     # Fetch the ZenML artifact store client
@@ -249,7 +268,7 @@ def extract_data(project_root):
     version_file = f'{project_root}/configs/data_version.yaml'
     with open(version_file, 'r') as f:
         version_data = yaml.safe_load(f)
-    return df, str(version_data['version'])
+    return df, str(version_data['data_version'])
 
 def load_features(X, y, version):
     print(f"Loading features and target with version {version}")

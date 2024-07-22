@@ -1,0 +1,15 @@
+model_name: linear_regression
+artifact_path: basic_lr
+
+tag_key: "model"
+tag_value: "basic LR"
+
+module_name: "sklearn.linear_model"
+class_name: "SGDRegressor"
+
+params:
+  penalty: ['l1', 'l2']
+  # solver: ["saga", "lbfgs", "liblinear"]
+  max_iter: [2]
+  random_state: [88] #, 100, 44]
+  # C: [0.1, 0.5, 0.9]
