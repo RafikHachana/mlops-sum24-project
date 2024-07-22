@@ -13,6 +13,10 @@ __pycache__/
 *.db
 src/outputs/
 datastore
+services/zenml
+mlruns
+multirun
+outputs
 
 # Distribution / packaging
 .Python

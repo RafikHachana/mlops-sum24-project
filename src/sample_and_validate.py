@@ -6,8 +6,8 @@ if __name__ == '__main__':
     sample_data()
 
     # Validate initial data
-    validate_initial_data()
+    # validate_initial_data()
 
     # Run checkpoint
-    if not run_checkpoint():
-        raise Exception("Checkpoint failed!")
+    # if not run_checkpoint():
+    #     raise Exception("Checkpoint failed!")

@@ -1,3 +1,4 @@
-url: "https://drive.usercontent.google.com/u/0/uc?id=1aw-Xu5T4UW6fr7icR7o30zPlagii9IV4&export=download"
+# url: "https://drive.usercontent.google.com/u/0/uc?id=1aw-Xu5T4UW6fr7icR7o30zPlagii9IV4&export=download"
+url: "http://localhost:8000/archive.zip"
 sample_size: 0.2
 sample_path: "data/samples/sample.csv"
