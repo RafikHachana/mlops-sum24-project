@@ -1,12 +1,16 @@
+import os
+
+BASE_PATH = os.path.expandvars("$PROJECTPATH")
+# BASE_PATH = "/home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project"
+
+import sys
+sys.path.append(BASE_PATH)
 
 import pandas as pd
 from typing_extensions import Tuple, Annotated
 from zenml import step, pipeline, ArtifactConfig
-from data import transform_data, extract_data, load_features, validate_transformed_data
-from utils import get_sample_version
-import os
-
-BASE_PATH = os.path.expandvars("$PROJECTPATH")
+from src.data import transform_data, extract_data, load_features, validate_transformed_data
+# from utils import get_sample_version
 
 @step(enable_cache=False)
 def extract()-> Tuple[
@@ -20,7 +24,7 @@ def extract()-> Tuple[
                                        tags=["data_preparation"])]
                     ]:
     
-    df, version = extract_data(BASE_PATH)
+    df, version = extract_data(os.path.join(BASE_PATH, "data", "samples", "sample.csv"))
 
     return df, version
 

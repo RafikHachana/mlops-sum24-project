@@ -1,0 +1,7 @@
+name: game_playtime_prediction
+
+
+entry_points:
+  main:
+    command: "python src/main.py --multirun"
+

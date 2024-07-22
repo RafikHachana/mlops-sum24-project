@@ -17,6 +17,46 @@ import requests
 from zipfile import ZipFile
 from io import BytesIO
 from tqdm import tqdm
+from zenml.client import Client
+from sklearn.model_selection import train_test_split
+import zenml
+
+
+
+def extract_data_training(cfg):
+    # Fetch the ZenML artifact store client
+    client = Client()
+
+
+    data = client.list_artifact_versions(name ="features_target", sort_by="version").items
+    data.reverse()
+    data = data[0].load()
+
+    print("NaN", data.isna().sum().sum())
+    # y = df['Average playtime two weeks']
+    # X = df.drop(columns=['Average playtime two weeks'])
+    # y.reverse()
+    # y = y[0].load()
+
+    # Load the data sample based on the version
+    # data_version = cfg.data_version
+    # artifact = artifact_store.get_artifact(name=f"data_sample_{data_version}")
+    # data = pd.read_csv(artifact.uri)
+
+    # Split data into training and validation sets
+    train_data, val_data = train_test_split(data, test_size=cfg.split_ratio.validation, random_state=42)
+
+    # Load the test data sample based on the version
+    test_data_version = cfg.test_data_version
+    # test_artifact = artifact_store.get_artifact(name=f"data_sample_{test_data_version}")
+    # test_data = pd.read_csv(test_artifact.uri)
+
+    # TODO: What is this?
+    # Split the test data
+    _, test_data = train_test_split(train_data, test_size=cfg.test_split_ratio, random_state=42)
+
+    return train_data, val_data, test_data
+
 
 def transform_data(df):
     # Your data transformation code
@@ -197,7 +237,7 @@ def transform_data(df):
 
     target_col = 'Average playtime two weeks'
     X = df.drop(columns=[target_col])
-    y = df[target_col]
+    y = df[[target_col]]
     return X, y
 
 def extract_data(BASE_PATH):
@@ -207,6 +247,8 @@ def extract_data(BASE_PATH):
 
 def load_features(X, y, version):
     print(f"Loading features and target with version {version}")
+    zenml.save_artifact(data = pd.concat([X,y], axis=1), name = "features_target", tags=[version])
+    return X, y
 
 def validate_transformed_data(X, y):
     assert X.shape[0] == y.shape[0], "X and y should have the same number of rows"
@@ -218,7 +260,7 @@ def validate_transformed_data(X, y):
     for col, typ in zip(cols, types):
         assert typ == int or typ == float, f"Column {col} should be numeric"
         # assert str(typ).startswith('int') or str(typ).startswith('float')
-    assert y.dtype == 'int', "y should be numeric"
+    assert y[y.columns[0]].dtype == 'int', "y should be numeric"
     return X, y
 
 def validate_app_id(validator: Validator):
@@ -416,7 +458,7 @@ config_path = os.path.join(
 def sample_data() -> None:
     # Download the zip file from the URL specified in the config
     # data_url = cfg.dataset.url
-    data_url = "https://drive.usercontent.google.com/u/0/uc?id=1aw-Xu5T4UW6fr7icR7o30zPlagii9IV4&export=download"
+    data_url = "http://localhost:8000/archive.zip"
     print(f"Downloading data from {data_url}")
     response = requests.get(data_url, stream=True)
 
@@ -446,7 +488,7 @@ def sample_data() -> None:
 
         # Extract the specific csv file
         # TODO: Fix
-        with thezip.open('small.csv') as thefile:
+        with thezip.open('games.csv') as thefile:
             df = pd.read_csv(thefile)
 
     # Sample the data
