@@ -6,6 +6,8 @@ BASE_PATH = os.path.expandvars("$PROJECTPATH")
 import sys
 sys.path.append(BASE_PATH)
 
+from airflow.models import Variable
+
 import pandas as pd
 from typing_extensions import Tuple, Annotated
 from zenml import step, pipeline, ArtifactConfig
@@ -54,7 +56,7 @@ def validate(X:pd.DataFrame,
                                            tags=["data_preparation"])]
                                     ]:
 
-    X, y = validate_transformed_data(X, y)
+    X, y = validate_features(X, y)
     
     return X, y
 

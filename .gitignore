@@ -13,10 +13,12 @@ __pycache__/
 *.db
 src/outputs/
 datastore
+.vscode
+outputs
 services/zenml
 mlruns
 multirun
-outputs
+
 
 # Distribution / packaging
 .Python
@@ -177,3 +179,11 @@ cython_debug/
 
 datastore
 data/games.csv
+services/zenml/**/*.json
+services/zenml/**/*.gzip
+services/zenml/**/*.gzip
+services/zenml/**/*.csv
+services/zenml/**/*.yaml
+services/zenml/**/*.yml
+
+*.db-journal

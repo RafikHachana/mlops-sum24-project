@@ -6,6 +6,8 @@ import great_expectations as gx
 from great_expectations.validator.validator import Validator
 from great_expectations.data_context import FileDataContext
 import re
+import yaml
+from great_expectations.dataset import PandasDataset
 
 import os
 import sys
@@ -58,6 +60,8 @@ def extract_data_training(cfg):
     return train_data, val_data, test_data
 
 
+URL_REGEX = r"^(?:https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$"
+
 def transform_data(df):
     # Your data transformation code
 
@@ -103,7 +107,7 @@ def transform_data(df):
             all_categories.extend(categories)
 
         unique_categories = set(all_categories)
-        print(feat_name, len(unique_categories))
+        # print(feat_name, len(unique_categories))
         if len(unique_categories) > 500:
             raise ValueError("Too many unique values")
         
@@ -158,7 +162,7 @@ def transform_data(df):
             all_categories.extend(categories)
 
         unique_categories = set(all_categories)
-        print(feat_name, len(unique_categories))
+        # print(feat_name, len(unique_categories))
 
         # create a new column for each category
         new_cols = []
@@ -240,10 +244,12 @@ def transform_data(df):
     y = df[[target_col]]
     return X, y
 
-def extract_data(BASE_PATH):
-    df = pd.read_csv(BASE_PATH)
-    version = "v1.0"
-    return df, version
+def extract_data(project_root):
+    df = pd.read_csv(f'{project_root}/data/samples/sample.csv')
+    version_file = f'{project_root}/configs/data_version.yaml'
+    with open(version_file, 'r') as f:
+        version_data = yaml.safe_load(f)
+    return df, str(version_data['version'])
 
 def load_features(X, y, version):
     print(f"Loading features and target with version {version}")
@@ -265,25 +271,19 @@ def validate_transformed_data(X, y):
 
 def validate_app_id(validator: Validator):
     validator.expect_column_values_to_be_unique(column="AppID")
-    validator.expect_column_values_to_match_json_schema(
+    validator.expect_column_values_to_be_between(
         column="AppID",
-        json_schema={
-            "type": "integer",
-            "minimum": 0,
-        },
+        min_value=0,
+        # max_value=1_000_000
     )
+    validator.expect_column_values_to_not_be_null("AppID")
 
 def validate_release_date(validator: Validator):
     col_name = "Release date"
     # the format is Oct 21, 2008
     validator.expect_column_values_to_match_regex(
         column=col_name,
-        regex=r"^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{2}, \d{4}$"
-    )
-    # it should be a valid date
-    validator.expect_column_values_to_match_like_pattern(
-        column=col_name,
-        like_pattern="%\b-%m-\%\d"
+        regex=r"^(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{1,2}, \d{4}$"
     )
     validator.expect_column_values_to_not_be_null(col_name)
     
@@ -307,26 +307,24 @@ def validate_metacritic_score(validator: Validator):
 
 def validate_support_url(validator: Validator):
     col_name = 'Support url'
-
-    validator.expect_column_values_to_match_like_pattern(
+    validator.expect_column_values_to_match_regex(
         column=col_name,
-        like_pattern="http%://%"
+        regex=URL_REGEX
     )
 
 def validate_metacritic_url(validator: Validator):
     col_name = 'Metacritic url'
-
-    validator.expect_column_values_to_match_like_pattern(
+    
+    validator.expect_column_values_to_match_regex(
         column=col_name,
-        like_pattern="http%://%"
+        regex=URL_REGEX
     )
 
 def validate_support_email(validator: Validator):
     col_name = 'Support email'
-
-    validator.expect_column_values_to_match_like_pattern(
+    validator.expect_column_values_to_match_regex(
         column=col_name,
-        like_pattern="%@%.%"
+        regex=r"^.+@.+\..+$"
     )
 
 def validate_estimated_owners(validator: Validator):
@@ -334,15 +332,15 @@ def validate_estimated_owners(validator: Validator):
     # use regex to match the pattern
     validator.expect_column_values_to_match_regex(
         column=col_name,
-        regex=r"^\d+-\d+$"
+        regex=r"^\d+ - \d+$"
     )
     validator.expect_column_values_to_not_be_null(col_name)
 
 def validate_website(validator: Validator):
     col_name = 'Website'
-    validator.expect_column_values_to_match_like_pattern(
+    validator.expect_column_values_to_match_regex(
         column=col_name,
-        like_pattern="http%://%"
+        regex=URL_REGEX
     )
 
 def validate_peak_ccu(validator: Validator):
@@ -386,7 +384,7 @@ def validate_supported_languages(validator: Validator):
     # they are in the format: "['English', 'French', ...]"
     validator.expect_column_values_to_match_regex(
         column=col_name,
-        regex="^\[(?:\'[^']*\')(?:\s*,\s*\'[^']*\')*\s*\]$"
+        regex=r"^\[(?:(?:\s*\'[^']*\')(?:\s*,\s*\'[^']*\')*\s*)?\]$"
     )
     validator.expect_column_values_to_not_be_null(col_name)
 
@@ -395,7 +393,7 @@ def validate_full_audio_languages(validator: Validator):
     # they are in the format: "['English', 'French', ...]"
     validator.expect_column_values_to_match_regex(
         column=col_name,
-        regex="^\[(?:\'[^']*\')(?:\s*,\s*\'[^']*\')*\s*\]$"
+        regex=r"^\[(?:(?:\s*\'[^']*\')(?:\s*,\s*\'[^']*\')*\s*)?\]$"
     )
     validator.expect_column_values_to_not_be_null(col_name)
 
@@ -508,6 +506,7 @@ def sample_data() -> None:
     # Save the sample data
     sample_df.to_csv(sample_path, index=False)
     print(f"Sampled data saved to {sample_path}")
+    return sample_df
 
 
 from great_expectations.core.batch import BatchRequest
@@ -604,6 +603,79 @@ def run_checkpoint():
     return checkpoint_result.success
 
 
+def validate_features(X, y):
+    context_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        "services/gx"
+    )
+
+    context = FileDataContext(context_root_dir=context_path)
+
+    ds1 = context.sources.add_or_update_pandas(name="transformed_ds")
+    da_x = ds1.add_dataframe_asset("transformed_features", X)
+    # da_y = ds1.add_dataframe_asset("target_data", y)
+    # da1 = ds1.add_csv_asset(
+    #     name = "sample",
+    #     filepath_or_buffer=sample_path
+    # )
+
+    suite_name = "transformed_features_validation_suite"
+
+    # Create an expectation suite
+    # suite = context.create_expectation_suite(expectation_suite_name=suite_name, overwrite_existing=True)
+
+    context.add_or_update_expectation_suite(suite_name)
+
+    # Define the expectations
+    batch_request = da_x.build_batch_request()
+    validator = context.get_validator(batch_request=batch_request, expectation_suite_name=suite_name)
+
+    # validator_funcs = []
+    # for func in validator_funcs:
+    #     print(func.__name__)
+    #     func(validator)
+
+
+    # Check that X and y have the same number of rows
+    assert X.shape[0] == y.shape[0], "X and y should have the same number of rows"
+
+    # Check that all columns in X are either int or float using great_expectations
+    for col in X.columns:
+        if col != "Price":
+            validator.expect_column_values_to_be_of_type(column=col, type_="int64")
+    # Price should be float64
+    validator.expect_column_values_to_be_of_type(column="Price", type_="float64")
+
+
+    binary_feats_prefix = ["Windows", "Mac", "Linux", "has_website", 'has_support_url', 'has_support_email', 'has_metacritic_url'
+                       "Categories ", "Supported languages ", "Full audio languages ", "Tags ", "Genres ", "Categories "]
+    for col in X.columns:
+        for prefix in binary_feats_prefix:
+            if col.startswith(prefix):
+                validator.expect_column_distinct_values_to_be_in_set(column=col, value_set=[0, 1])
+
+
+    # Save the expectation suite
+    validator.save_expectation_suite(discard_failed_expectations=False)
+
+    checkpoint = context.add_or_update_checkpoint(
+        name = "transformed_data_validation_checkpoint",
+        validations=[
+            {
+                "batch_request": batch_request,
+                "expectation_suite_name" : suite_name
+            }
+        ]
+    )
+    
+    checkpoint_result = checkpoint.run()
+
+    if not checkpoint_result.success:
+        raise Exception("Checkpoint failed!")
+
+    return X, y
+
+
 if __name__ == "__main__":
     # sample_data()
     sample_path = os.path.join(
@@ -613,4 +685,6 @@ if __name__ == "__main__":
     df = pd.read_csv(sample_path)
     validate_initial_data()
     result = run_checkpoint()
+
+
 
