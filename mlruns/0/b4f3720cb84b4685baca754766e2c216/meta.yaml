@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/b4f3720cb84b4685baca754766e2c216/artifacts
+end_time: 1721752222766
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: b4f3720cb84b4685baca754766e2c216
+run_name: capable-grouse-459
+run_uuid: b4f3720cb84b4685baca754766e2c216
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721752217031
+status: 4
+tags: []
+user_id: rafik

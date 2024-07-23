@@ -1,0 +1,14 @@
+aliases: []
+creation_timestamp: 1721748516227
+current_stage: None
+description: null
+last_updated_timestamp: 1721748516227
+name: random_forest
+run_id: 100403637052401a909c425fc07b2ffc
+run_link: null
+source: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/100403637052401a909c425fc07b2ffc/artifacts/basic_rf
+status: READY
+status_message: null
+storage_location: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/100403637052401a909c425fc07b2ffc/artifacts/basic_rf
+user_id: null
+version: 69

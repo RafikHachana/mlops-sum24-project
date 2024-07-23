@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/829759060195224215/19de40d5aee34f408e4eec009836a201/artifacts
+end_time: 1721680573106
+entry_point_name: ''
+experiment_id: '829759060195224215'
+lifecycle_stage: active
+run_id: 19de40d5aee34f408e4eec009836a201
+run_name: multi_run_linear_regression_f1_nan
+run_uuid: 19de40d5aee34f408e4eec009836a201
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721680573099
+status: 4
+tags: []
+user_id: rafik

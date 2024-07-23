@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/3add9c05ba4645eeb68d2bb429853afe/artifacts
+end_time: 1721733947623
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 3add9c05ba4645eeb68d2bb429853afe
+run_name: debonair-mouse-866
+run_uuid: 3add9c05ba4645eeb68d2bb429853afe
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721733843985
+status: 4
+tags: []
+user_id: rafik

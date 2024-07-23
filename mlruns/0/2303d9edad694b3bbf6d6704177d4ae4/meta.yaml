@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/2303d9edad694b3bbf6d6704177d4ae4/artifacts
+end_time: 1721585821358
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 2303d9edad694b3bbf6d6704177d4ae4
+run_name: upbeat-shrimp-755
+run_uuid: 2303d9edad694b3bbf6d6704177d4ae4
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721585814545
+status: 4
+tags: []
+user_id: rafik

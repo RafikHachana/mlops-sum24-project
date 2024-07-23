@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/a3a533d59849458a89bf882d21a50eb7/artifacts
+end_time: 1721768810818
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: a3a533d59849458a89bf882d21a50eb7
+run_name: grandiose-mouse-635
+run_uuid: a3a533d59849458a89bf882d21a50eb7
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721768804710
+status: 4
+tags: []
+user_id: rafik

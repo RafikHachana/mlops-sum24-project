@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/019049c480db4802990d7dfae37a61d7/artifacts
+end_time: 1721679761581
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 019049c480db4802990d7dfae37a61d7
+run_name: merciful-mole-739
+run_uuid: 019049c480db4802990d7dfae37a61d7
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721679754354
+status: 4
+tags: []
+user_id: rafik

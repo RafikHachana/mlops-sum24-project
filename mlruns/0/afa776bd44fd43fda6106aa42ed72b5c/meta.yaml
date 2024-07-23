@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/afa776bd44fd43fda6106aa42ed72b5c/artifacts
+end_time: 1721734379745
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: afa776bd44fd43fda6106aa42ed72b5c
+run_name: luminous-fox-286
+run_uuid: afa776bd44fd43fda6106aa42ed72b5c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721734197738
+status: 4
+tags: []
+user_id: rafik

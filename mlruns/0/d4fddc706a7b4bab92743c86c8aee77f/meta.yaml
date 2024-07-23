@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/d4fddc706a7b4bab92743c86c8aee77f/artifacts
+end_time: 1721680573095
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: d4fddc706a7b4bab92743c86c8aee77f
+run_name: intrigued-calf-697
+run_uuid: d4fddc706a7b4bab92743c86c8aee77f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721680573089
+status: 3
+tags: []
+user_id: rafik

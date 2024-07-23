@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/8726a4f8dcc045f9b69fc0273856deec/artifacts
+end_time: 1721754352590
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 8726a4f8dcc045f9b69fc0273856deec
+run_name: casual-roo-335
+run_uuid: 8726a4f8dcc045f9b69fc0273856deec
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721754339309
+status: 3
+tags: []
+user_id: rafik

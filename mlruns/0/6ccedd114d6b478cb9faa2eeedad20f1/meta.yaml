@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/6ccedd114d6b478cb9faa2eeedad20f1/artifacts
+end_time: 1721751760547
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 6ccedd114d6b478cb9faa2eeedad20f1
+run_name: nervous-fish-849
+run_uuid: 6ccedd114d6b478cb9faa2eeedad20f1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721751754805
+status: 4
+tags: []
+user_id: rafik

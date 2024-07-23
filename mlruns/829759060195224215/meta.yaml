@@ -1,0 +1,6 @@
+artifact_location: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/829759060195224215
+creation_time: 1721680449373
+experiment_id: '829759060195224215'
+last_update_time: 1721680449373
+lifecycle_stage: active
+name: linear_regression_mlops_experiment

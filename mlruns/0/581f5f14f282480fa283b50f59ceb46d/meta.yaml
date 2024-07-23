@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/581f5f14f282480fa283b50f59ceb46d/artifacts
+end_time: 1721752385240
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 581f5f14f282480fa283b50f59ceb46d
+run_name: unleashed-hog-417
+run_uuid: 581f5f14f282480fa283b50f59ceb46d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721752379511
+status: 4
+tags: []
+user_id: rafik
