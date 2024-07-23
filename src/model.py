@@ -9,6 +9,7 @@ import pandas as pd
 import mlflow
 import mlflow.sklearn
 import importlib
+from sklearn.preprocessing import StandardScaler
 
 def train(train_data, val_data):
     # Extract features and labels
@@ -40,12 +41,12 @@ def evaluate(model, test_data):
 
     return {"accuracy": test_mse}
 
-def log_metadata(model, metrics, cfg):
-    # Log model and metrics using MLflow
-    with mlflow.start_run():
-        mlflow.log_params(cfg)
-        mlflow.sklearn.log_model(model, "model")
-        mlflow.log_metrics(metrics)
+# def log_metadata(model, metrics, cfg):
+#     # Log model and metrics using MLflow
+#     with mlflow.start_run():
+#         mlflow.log_params(cfg)
+#         mlflow.sklearn.log_model(model, "model")
+#         mlflow.log_metrics(metrics)
 
 def log_metadata(cfg, gs, X_train, y_train, X_test, y_test):
 
@@ -79,8 +80,8 @@ def log_metadata(cfg, gs, X_train, y_train, X_test, y_test):
         mlflow.end_run()
 
     # Fake run
-    with mlflow.start_run():
-        pass
+    # with mlflow.start_run():
+    #     pass
 
     # Parent run
     with mlflow.start_run(run_name = run_name, experiment_id = experiment_id) as run:
@@ -115,9 +116,9 @@ def log_metadata(cfg, gs, X_train, y_train, X_test, y_test):
         client = mlflow.client.MlflowClient()
         client.set_model_version_tag(name = cfg.model.model_name, version=model_info.registered_model_version, key="source", value="best_Grid_search_model")
 
-
+        model_count = 1
         for index, result in cv_results.iterrows():
-
+            print("Iterating through CV results")
             child_run_name = "_".join(['child', run_name, str(index)]) # type: ignore
             with mlflow.start_run(run_name = child_run_name, experiment_id= experiment_id, nested=True): #, tags=best_metrics_dict):
                 ps = result.filter(regex='param_').to_dict()
@@ -158,25 +159,44 @@ def log_metadata(cfg, gs, X_train, y_train, X_test, y_test):
                     signature = signature,
                     input_example = X_train.iloc[0].to_numpy(),
                     registered_model_name = cfg.model.model_name,
-                    pyfunc_predict_fn = cfg.model.pyfunc_predict_fn
+                    pyfunc_predict_fn = cfg.model.pyfunc_predict_fn,
                 )
+
+
+                client.set_registered_model_alias(cfg.model.model_name, f"challenger{model_count}", model_info.registered_model_version)
+                model_count += 1
 
                 model_uri = model_info.model_uri
                 loaded_model = mlflow.sklearn.load_model(model_uri=model_uri)
+
+                print("Loaded model")
 
                 predictions = loaded_model.predict(X_test) # type: ignore
         
                 eval_data = pd.DataFrame(y_test)
                 eval_data.columns = ["label"]
-                eval_data["predictions"] = predictions
+
+                # scaler = StandardScaler()
+                eval_data['predictions'] = predictions
+                # eval_data["predictions"] = predictions
+
+                print("Length of eval data", len(eval_data.index))
+                print(eval_data)
+
+                print("Evaluating model ...")
 
                 results = mlflow.evaluate(
                     data=eval_data,
                     model_type="regressor",
                     targets="label",
                     predictions="predictions",
-                    evaluators=["default"]
+                    evaluators=None,
+                    # evaluator_config={
+                    #     "log_model_explainability": False
+                    # }
                 )
+
+                print("Done evaluating model")
 
                 print(f"metrics:\n{results.metrics}")
             
@@ -223,6 +243,10 @@ def train(X_train, y_train, cfg):
         return_train_score = True
     )
 
+    print(f"Starting training ... ({class_name})")
+
     gs.fit(X_train, y_train)
+
+    print(f"Done training ... {class_name}")
 
     return gs

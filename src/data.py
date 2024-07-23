@@ -27,10 +27,10 @@ import zenml
 def load_features_training(name, version, size = 1):
     client = Client()
     l = client.list_artifact_versions(name = name, tag = version, sort_by="version").items
-    print(l)
+    # print(l)
     l.reverse
 
-    df = client.get_artifact_version('22ff69f5-73e5-4f30-94d5-b71127370f6d').load()
+    df = client.get_artifact_version('99ce7f88-b396-42c0-8e0d-86a576011216').load()
     df = df.sample(frac = size, random_state = 88)
 
     print("size of df is ", df.shape)
@@ -65,16 +65,16 @@ def extract_data_training(cfg):
     # data = pd.read_csv(artifact.uri)
 
     # Split data into training and validation sets
-    train_data, val_data = train_test_split(data, test_size=cfg.split_ratio.validation, random_state=42)
+    train_data, val_data = train_test_split(data, test_size=0.1, random_state=42)
 
     # Load the test data sample based on the version
-    test_data_version = cfg.test_data_version
+    # test_data_version = cfg.test_data_version
     # test_artifact = artifact_store.get_artifact(name=f"data_sample_{test_data_version}")
     # test_data = pd.read_csv(test_artifact.uri)
 
     # TODO: What is this?
     # Split the test data
-    _, test_data = train_test_split(train_data, test_size=cfg.test_split_ratio, random_state=42)
+    _, test_data = train_test_split(train_data, test_size=0.1, random_state=42)
 
     return train_data, val_data, test_data
 
@@ -151,11 +151,14 @@ def transform_data(df):
     df.dropna(subset=['Categories', 'Genres', 'Tags', 'Movies'], inplace=True)
     # transform Categories (unique vals = 40) using one hot encoding and fill missing values (3407).
     df = clean_cat_feats(df, 'Categories')
+    # df.drop(columns=['Categories'], inplace=True)
+
     # raise ValueError("Too many unique values")
     # transform Genres (unique vals = 30) using one hot encoding and fill missing values (2439).
     df = clean_cat_feats(df, 'Genres')
     # transform Tags (unique vals = 446) using one hot encoding and fill missing values (14014). Or maybe not. Just ignore it.
-    df = clean_cat_feats(df, 'Tags')
+    # df = clean_cat_feats(df, 'Tags')
+    df.drop(columns=['Tags'], inplace=True)
     # tranform Movies to num_movies (not sure though. These are NOT actual movies. They are trailers. So, maybe we can ignore this feature.)
     df['num_movies'] = df['Movies'].apply(lambda x: len(x.split(',')))
     df.drop(columns=['Movies'], inplace=True)
@@ -205,6 +208,9 @@ def transform_data(df):
         return df
 
     # Supported languages (unique = 134) one hot encoding
+    # df.drop(columns=['Supported languages'], inplace=True)
+    # df.drop(columns=['Full audio languages'], inplace=True)
+
     df = clean_cat_feats_langs(df, 'Supported languages')
     # Full audio languages (unique = 121) one hot encoding
     df = clean_cat_feats_langs(df, 'Full audio languages')

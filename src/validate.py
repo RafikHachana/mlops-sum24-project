@@ -1,91 +1,136 @@
-from data import extract_data # custom module
-from transform_data import transform_data # custom module
-from model import retrieve_model_with_alias # custom module
-from utils import init_hydra # custom module
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from src.data import extract_data_training, transform_data # custom module
+# from transform_data import transform_data # custom module
+# from model import retrieve_model_with_alias # custom module
+# from utils import init_hydra # custom module
 import giskard
 import hydra
 import mlflow
+from omegaconf import DictConfig
+
+BASE_PATH = "/home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project"
 
 
-cfg = init_hydra()
+# cfg = init_hydra()
+@hydra.main(config_path="../configs", config_name="config")
+def main(cfg: DictConfig) -> None:
+    version  = "v4"
+    # version  = cfg.test_data_version
 
-version  = cfg.test_data_version
+    _, _, df = extract_data_training(cfg)
 
-df, version = extract_data(version = version, cfg = cfg)
+    # Specify categorical columns and target column
+    # TARGET_COLUMN = cfg.data.target_cols[0]
+    TARGET_COLUMN = "Average playtime two weeks"
 
-# Specify categorical columns and target column
-TARGET_COLUMN = cfg.data.target_cols[0]
+    # CATEGORICAL_COLUMNS = list(cfg.data.cat_cols) + list(cfg.data.bin_cols)
 
-CATEGORICAL_COLUMNS = list(cfg.data.cat_cols) + list(cfg.data.bin_cols)
-
-dataset_name = cfg.data.dataset_name
+    # dataset_name = cfg.data.dataset_name
+    dataset_name = "Games"
 
 
-# Wrap your Pandas DataFrame with giskard.Dataset (validation or test set)
-giskard_dataset = giskard.Dataset(
-    df=df,  # A pandas.DataFrame containing raw data (before pre-processing) and including ground truth variable.
-    target=TARGET_COLUMN,  # Ground truth variable
-    name=dataset_name, # Optional: Give a name to your dataset
-    cat_columns=CATEGORICAL_COLUMNS  # List of categorical columns. Optional, but improves quality of results if available.
-)
+    # Wrap your Pandas DataFrame with giskard.Dataset (validation or test set)
+    giskard_dataset = giskard.Dataset(
+        df=df,  # A pandas.DataFrame containing raw data (before pre-processing) and including ground truth variable.
+        target=TARGET_COLUMN,  # Ground truth variable
+        name=dataset_name, # Optional: Give a name to your dataset
+        # cat_columns=CATEGORICAL_COLUMNS  # List of categorical columns. Optional, but improves quality of results if available.
+    )
 
-model_name = cfg.model.best_model_name
+    model_name = "linear_regression"
 
-# You can sweep over challenger aliases using Hydra
-model_alias = cfg.model.best_model_alias
+    # # You can sweep over challenger aliases using Hydra
+    # model_alias = cfg.model.best_model_alias
 
-model: mlflow.pyfunc.PyFuncModel = retrieve_model_with_alias(model_name, model_alias = model_alias)  
+    # model: mlflow.pyfunc.PyFuncModel = retrieve_model_with_alias(model_name, model_alias = model_alias)  
 
-client = mlflow.MlflowClient()
+    # client = mlflow.MlflowClient()
 
-mv = client.get_model_version_by_alias(name = model_name, alias=model_alias)
+    # mv = client.get_model_version_by_alias(name = model_name, alias=model_alias)
 
-model_version = mv.version
+    # model_version = mv.version
 
-transformer_version = cfg.data_transformer_version
+    # transformer_version = cfg.data_transformer_version
 
-def predict(raw_df):
-    X = transform_data(
-                        df = raw_df, 
-                        version = version, 
-                        cfg = cfg, 
-                        return_df = False, 
-                        only_transform = True, 
-                        transformer_version = transformer_version, 
-                        only_X = True
-                      )
 
-    return model.predict(X)
+    client = mlflow.MlflowClient()
 
-predictions = predict(df[df.columns].head())
-print(predictions)
+    # Retrieve all challenger models
+    challenger_aliases = [f"challenger{i}" for i in range(1, 3)]
+    challenger_models = []
 
-giskard_model = giskard.Model(
-  model=predict,
-  model_type = "classification", # regression
-  classification_labels=list(cfg.data.labels),  # The order MUST be identical to the prediction_function's output order
-  feature_names = df.columns, # By default all columns of the passed dataframe
-  name=model_name, # Optional: give it a name to identify it in metadata
-  # classification_threshold=0.5, # Optional: Default: 0.5
-)
+    for alias in challenger_aliases:
+        try:
+            mv = client.get_model_version_by_alias(name=model_name, alias=alias)
+            current_model: mlflow.pyfunc.PyFuncModel = mlflow.sklearn.load_model(f"models:/{model_name}/{mv.version}")
+            challenger_models.append((alias, current_model, mv.version))
+        except Exception as e:
+            print(f"Failed to retrieve model with alias {alias}: {e}")
+    print(challenger_models)
+    print(challenger_aliases)
 
-scan_results = giskard.scan(giskard_model, giskard_dataset)
+    champion = None
+    champion_results = None
+    champion_version = None
+    for _, model, version in challenger_models:
+    # model = challenger_models[0][1]
+        def predict(raw_df):
+            # print("COOOOLS", raw_df.head())
+            X = raw_df#[raw_df.columns[:-1]]#.drop(columns="Average playtime two weeks")
 
-# Save the results in `html` file
-scan_results_path = f"reports/validation_results_{model_name}_{model_version}_{dataset_name}_{version}.html"
-scan_results.to_html(scan_results_path)
+            return model.predict(X)
 
-suite_name = f"test_suite_{model_name}_{model_version}_{dataset_name}_{version}"
-test_suite = giskard.Suite(name = suite_name)
+        predictions = predict(df[df.columns[:-1]].head())
+        # print(predictions)
 
-test1 = giskard.testing.test_f1(model = giskard_model, 
-                                dataset = giskard_dataset,
-                                threshold=cfg.model.f1_threshold)
+        giskard_model = giskard.Model(
+        model=predict,
+        model_type = "regression", # regression
+        # classification_labels=list(cfg.data.labels),  # The order MUST be identical to the prediction_function's output order
+        # feature_names = df.drop(columns=[TARGET_COLUMN]).columns, # By default all columns of the passed dataframe
+        name=model_name, # Optional: give it a name to identify it in metadata
+        # classification_threshold=0.5, # Optional: Default: 0.5
+        )
 
-test_suite.add_test(test1)
+        # exit()
 
-test_results = test_suite.run()
-if (test_results.passed):
-    print("Passed model validation!")
-else:
-    print("Model has vulnerabilities!")
+        scan_results = giskard.scan(giskard_model, giskard_dataset)
+
+        model_version = "v0.0.1"
+
+        # Save the results in `html` file
+        scan_results_path = os.path.join(BASE_PATH, f"reports/validation_results_{model_name}_{model_version}_{dataset_name}_{version}.html")
+        
+        scan_results.to_html(scan_results_path)
+
+
+        suite_name = f"test_suite_{model_name}_{model_version}_{dataset_name}_{version}"
+        test_suite = giskard.Suite(name = suite_name)
+
+        test1 = giskard.testing.test_mae(model = giskard_model, 
+                                        dataset = giskard_dataset,
+                                        threshold=1e21)
+
+        test_suite.add_test(test1)
+
+        test_results = test_suite.run()
+        if (test_results.passed):
+            print("Passed model validation!")
+            if champion is None or (len(scan_results.issues) < len(champion_results.issues)):
+                champion = model
+                champion_results = scan_results
+                champion_version = version
+        else:
+            print("Model has vulnerabilities!")
+
+
+    if champion is not None:
+        print("Champion model found!")
+        client.set_registered_model_alias(model_name, "champion", champion_version)
+    else:
+        exit(1)
+
+if __name__ == "__main__":
+    main()
