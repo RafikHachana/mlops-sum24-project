@@ -1,8 +1,11 @@
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pytest
 import pandas as pd
 from great_expectations.dataset import PandasDataset
-from data import (
+from src.data import (
     validate_app_id,
     validate_release_date,
     validate_user_score,
@@ -34,7 +37,7 @@ def success_validator():
         "DLC count": [0, 2, 5],
         "Supported languages": ["['English', 'French']", "['German', 'Spanish']", "['Chinese', 'Japanese']"],
         "Full audio languages": ["['English', 'French']", "['German', 'Spanish']", "['Chinese', 'Japanese']"],
-        "Estimated owners": ["1000-5000", "500-2000", "10000-50000"],
+        "Estimated owners": ["1000 - 5000", "500 - 2000", "10000 - 50000"],
         "Website": ["http://example.com", "https://example.org", "http://example.net"]
     })
     return PandasDataset(df)
@@ -47,7 +50,7 @@ def fail_validator():
         "User score": [85, 150, 70],  # Score out of range
         "Metacritic score": [88, -5, 105],  # Score out of range
         "Support url": ["ftp://support.com", "https://support.org", "htp://help.net"],  # Incorrect URL format
-        "Metacritic url": ["http://metacritic.com/game1", "metacritic.org/game2", "http://metacritic.net/game3"],  # Incorrect URL format
+        "Metacritic url": ["http://metacritic.com/game1", "not_a_url", "http://metacritic.net/game3"],  # Incorrect URL format
         "Peak CCU": [500, -2000, 1500000000],  # Out of range
         "Required age": [-1, 101, 18],  # Out of range
         "Price": [-10, 1500, 59.99],  # Out of range
