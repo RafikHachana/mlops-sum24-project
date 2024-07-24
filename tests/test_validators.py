@@ -34,7 +34,7 @@ def success_validator():
         "DLC count": [0, 2, 5],
         "Supported languages": ["['English', 'French']", "['German', 'Spanish']", "['Chinese', 'Japanese']"],
         "Full audio languages": ["['English', 'French']", "['German', 'Spanish']", "['Chinese', 'Japanese']"],
-        "Estimated owners": ["1000-5000", "500-2000", "10000-50000"],
+        "Estimated owners": ["1000 - 5000", "500 - 2000", "10000 - 50000"],
         "Website": ["http://example.com", "https://example.org", "http://example.net"]
     })
     return PandasDataset(df)
@@ -46,8 +46,8 @@ def fail_validator():
         "Release date": ["October 21, 2008", "11/05/2010", "2021-12-31"],  # Incorrect date format
         "User score": [85, 150, 70],  # Score out of range
         "Metacritic score": [88, -5, 105],  # Score out of range
-        "Support url": ["ftp://support.com", "https://support.org", "htp://help.net"],  # Incorrect URL format
-        "Metacritic url": ["http://metacritic.com/game1", "metacritic.org/game2", "http://metacritic.net/game3"],  # Incorrect URL format
+        "Support url": [2, 2.3, 5],  # Incorrect URL format
+        "Metacritic url": [5, 10, -5],  # Incorrect URL format
         "Peak CCU": [500, -2000, 1500000000],  # Out of range
         "Required age": [-1, 101, 18],  # Out of range
         "Price": [-10, 1500, 59.99],  # Out of range
@@ -55,7 +55,7 @@ def fail_validator():
         "Supported languages": ["English, French", "['German', Spanish]", "['Chinese', 'Japanese']"],  # Incorrect format
         "Full audio languages": ["['English', French']", "German, 'Spanish'", "['Chinese', 'Japanese']"],  # Incorrect format
         "Estimated owners": ["1000_5000", "500-2000", "10000to50000"],  # Incorrect formats
-        "Website": ["ftp://example.com", "htp://example.org", "example.net"]  # Incorrect formats
+        "Website": [-1, 3.5, 100] # Incorrect formats
     })
     return PandasDataset(df)
 
