@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/a6077eee3c044f4d88f4012f8d270b15/artifacts
+end_time: 1721734575034
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: a6077eee3c044f4d88f4012f8d270b15
+run_name: big-calf-820
+run_uuid: a6077eee3c044f4d88f4012f8d270b15
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721734558727
+status: 4
+tags: []
+user_id: rafik

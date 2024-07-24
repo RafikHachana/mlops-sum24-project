@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/ff6653fb46bd4721a714d98a65ba5c29/artifacts
+end_time: 1721750829739
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: ff6653fb46bd4721a714d98a65ba5c29
+run_name: shivering-fawn-931
+run_uuid: ff6653fb46bd4721a714d98a65ba5c29
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721750826442
+status: 4
+tags: []
+user_id: rafik

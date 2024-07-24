@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/f6e7e51692134b8a82c4f803e8c0790c/artifacts
+end_time: 1721752484591
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: f6e7e51692134b8a82c4f803e8c0790c
+run_name: blushing-squid-116
+run_uuid: f6e7e51692134b8a82c4f803e8c0790c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721752478471
+status: 4
+tags: []
+user_id: rafik

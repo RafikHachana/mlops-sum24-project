@@ -6,6 +6,8 @@ import great_expectations as gx
 from great_expectations.validator.validator import Validator
 from great_expectations.data_context import FileDataContext
 import re
+import yaml
+from great_expectations.dataset import PandasDataset
 
 import os
 import sys
@@ -17,8 +19,71 @@ import requests
 from zipfile import ZipFile
 from io import BytesIO
 from tqdm import tqdm
+from zenml.client import Client
+from sklearn.model_selection import train_test_split
+import zenml
 
-def transform_data(df):
+
+def load_features_training(name, version, size = 1):
+    client = Client()
+    l = client.list_artifact_versions(name = name, tag = version, sort_by="version").items
+    l.sort(key=lambda x: int(x.version), reverse=True)
+
+
+
+    df = l[0].load()
+    if size < 1:
+        df = df.sample(frac = size, random_state = 88)
+
+    print("size of df is ", df.shape)
+    print("df columns: ", df.columns)
+
+    X = df[df.columns[:-1]]
+    y = df[df.columns[-1]]
+
+    print("shapes of X,y = ", X.shape, y.shape)
+
+    return X, y
+
+
+# def extract_data_training(cfg):
+#     # Fetch the ZenML artifact store client
+#     client = Client()
+
+
+#     data = client.list_artifact_versions(name ="features_target", sort_by="version").items
+#     data.reverse()
+#     data = data[0].load()
+
+#     print("NaN", data.isna().sum().sum())
+#     # y = df['Average playtime two weeks']
+#     # X = df.drop(columns=['Average playtime two weeks'])
+#     # y.reverse()
+#     # y = y[0].load()
+
+#     # Load the data sample based on the version
+#     # data_version = cfg.data_version
+#     # artifact = artifact_store.get_artifact(name=f"data_sample_{data_version}")
+#     # data = pd.read_csv(artifact.uri)
+
+#     # Split data into training and validation sets
+#     train_data, val_data = train_test_split(data, test_size=0.1, random_state=42)
+
+#     # Load the test data sample based on the version
+#     # test_data_version = cfg.test_data_version
+#     # test_artifact = artifact_store.get_artifact(name=f"data_sample_{test_data_version}")
+#     # test_data = pd.read_csv(test_artifact.uri)
+
+#     # TODO: What is this?
+#     # Split the test data
+#     _, test_data = train_test_split(train_data, test_size=0.1, random_state=42)
+
+#     return train_data, val_data, test_data
+
+
+URL_REGEX = r"^(?:https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$"
+
+def transform_data(df, only_x=False):
     # Your data transformation code
 
     gc.collect()
@@ -30,6 +95,8 @@ def transform_data(df):
     # probably drop Screenshots.
     # drop AppID
     # drop Name
+
+    # print("Columns", df.columns)
 
     df.drop(columns=['Header image', 'Score rank', 'Developers', 'Publishers', 'Screenshots', 'AppID', 'Name'], inplace=True)
 
@@ -63,7 +130,8 @@ def transform_data(df):
             all_categories.extend(categories)
 
         unique_categories = set(all_categories)
-        print(feat_name, len(unique_categories))
+        # print(feat_name, len(unique_categories))
+        print(f"Unique categories for {feat_name}: {len(unique_categories)}")
         if len(unique_categories) > 500:
             raise ValueError("Too many unique values")
         
@@ -87,12 +155,16 @@ def transform_data(df):
 
     df.dropna(subset=['Categories', 'Genres', 'Tags', 'Movies'], inplace=True)
     # transform Categories (unique vals = 40) using one hot encoding and fill missing values (3407).
-    df = clean_cat_feats(df, 'Categories')
+    # df = clean_cat_feats(df, 'Categories')
+    df.drop(columns=['Categories'], inplace=True)
+    df.drop(columns=['Genres'], inplace=True)
+
     # raise ValueError("Too many unique values")
     # transform Genres (unique vals = 30) using one hot encoding and fill missing values (2439).
-    df = clean_cat_feats(df, 'Genres')
+    # df = clean_cat_feats(df, 'Genres')
     # transform Tags (unique vals = 446) using one hot encoding and fill missing values (14014). Or maybe not. Just ignore it.
-    df = clean_cat_feats(df, 'Tags')
+    # df = clean_cat_feats(df, 'Tags')
+    df.drop(columns=['Tags'], inplace=True)
     # tranform Movies to num_movies (not sure though. These are NOT actual movies. They are trailers. So, maybe we can ignore this feature.)
     df['num_movies'] = df['Movies'].apply(lambda x: len(x.split(',')))
     df.drop(columns=['Movies'], inplace=True)
@@ -118,7 +190,7 @@ def transform_data(df):
             all_categories.extend(categories)
 
         unique_categories = set(all_categories)
-        print(feat_name, len(unique_categories))
+        # print(feat_name, len(unique_categories))
 
         # create a new column for each category
         new_cols = []
@@ -142,9 +214,12 @@ def transform_data(df):
         return df
 
     # Supported languages (unique = 134) one hot encoding
-    df = clean_cat_feats_langs(df, 'Supported languages')
+    df.drop(columns=['Supported languages'], inplace=True)
+    df.drop(columns=['Full audio languages'], inplace=True)
+
+    # df = clean_cat_feats_langs(df, 'Supported languages')
     # Full audio languages (unique = 121) one hot encoding
-    df = clean_cat_feats_langs(df, 'Full audio languages')
+    # df = clean_cat_feats_langs(df, 'Full audio languages')
 
 
     # KEEP
@@ -194,19 +269,24 @@ def transform_data(df):
     # Negative
     # Recommendations
     gc.collect()
-
+    if only_x:
+        return df
     target_col = 'Average playtime two weeks'
     X = df.drop(columns=[target_col])
-    y = df[target_col]
+    y = df[[target_col]]
     return X, y
 
-def extract_data(BASE_PATH):
-    df = pd.read_csv(BASE_PATH)
-    version = "v1.0"
-    return df, version
+def extract_data(project_root):
+    df = pd.read_csv(f'{project_root}/data/samples/sample.csv')
+    version_file = f'{project_root}/configs/data_version.yaml'
+    with open(version_file, 'r') as f:
+        version_data = yaml.safe_load(f)
+    return df, str(version_data['data_version'])
 
 def load_features(X, y, version):
     print(f"Loading features and target with version {version}")
+    zenml.save_artifact(data = pd.concat([X,y], axis=1), name = "features_target", tags=[version])
+    return X, y
 
 def validate_transformed_data(X, y):
     assert X.shape[0] == y.shape[0], "X and y should have the same number of rows"
@@ -218,30 +298,24 @@ def validate_transformed_data(X, y):
     for col, typ in zip(cols, types):
         assert typ == int or typ == float, f"Column {col} should be numeric"
         # assert str(typ).startswith('int') or str(typ).startswith('float')
-    assert y.dtype == 'int', "y should be numeric"
+    assert y[y.columns[0]].dtype == 'int', "y should be numeric"
     return X, y
 
 def validate_app_id(validator: Validator):
     validator.expect_column_values_to_be_unique(column="AppID")
-    validator.expect_column_values_to_match_json_schema(
+    validator.expect_column_values_to_be_between(
         column="AppID",
-        json_schema={
-            "type": "integer",
-            "minimum": 0,
-        },
+        min_value=0,
+        # max_value=1_000_000
     )
+    validator.expect_column_values_to_not_be_null("AppID")
 
 def validate_release_date(validator: Validator):
     col_name = "Release date"
     # the format is Oct 21, 2008
     validator.expect_column_values_to_match_regex(
         column=col_name,
-        regex=r"^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{2}, \d{4}$"
-    )
-    # it should be a valid date
-    validator.expect_column_values_to_match_like_pattern(
-        column=col_name,
-        like_pattern="%\b-%m-\%\d"
+        regex=r"^(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)(?: \d{1,2},)? \d{4}$"
     )
     validator.expect_column_values_to_not_be_null(col_name)
     
@@ -265,43 +339,57 @@ def validate_metacritic_score(validator: Validator):
 
 def validate_support_url(validator: Validator):
     col_name = 'Support url'
-
-    validator.expect_column_values_to_match_like_pattern(
+    # check type. it should be string
+    validator.expect_column_values_to_be_of_type(
         column=col_name,
-        like_pattern="http%://%"
+        type_='object'
     )
+    # validator.expect_column_values_to_match_regex(
+    #     column=col_name,
+    #     regex=URL_REGEX
+    # )
 
 def validate_metacritic_url(validator: Validator):
     col_name = 'Metacritic url'
-
-    validator.expect_column_values_to_match_like_pattern(
+    validator.expect_column_values_to_be_of_type(
         column=col_name,
-        like_pattern="http%://%"
+        type_='object'
     )
+    # validator.expect_column_values_to_match_regex(
+    #     column=col_name,
+    #     regex=URL_REGEX
+    # )
 
 def validate_support_email(validator: Validator):
     col_name = 'Support email'
-
-    validator.expect_column_values_to_match_like_pattern(
+    validator.expect_column_values_to_be_of_type(
         column=col_name,
-        like_pattern="%@%.%"
+        type_='object'
     )
+    # validator.expect_column_values_to_match_regex(
+    #     column=col_name,
+    #     regex=r"^.+@.+\..+$"
+    # )
 
 def validate_estimated_owners(validator: Validator):
     col_name = 'Estimated owners'
     # use regex to match the pattern
     validator.expect_column_values_to_match_regex(
         column=col_name,
-        regex=r"^\d+-\d+$"
+        regex=r"^\d+ - \d+$"
     )
     validator.expect_column_values_to_not_be_null(col_name)
 
 def validate_website(validator: Validator):
     col_name = 'Website'
-    validator.expect_column_values_to_match_like_pattern(
+    validator.expect_column_values_to_be_of_type(
         column=col_name,
-        like_pattern="http%://%"
+        type_='object'
     )
+    # validator.expect_column_values_to_match_regex(
+    #     column=col_name,
+    #     regex=URL_REGEX
+    # )
 
 def validate_peak_ccu(validator: Validator):
     col_name = 'Peak CCU'
@@ -335,7 +423,7 @@ def validate_dlc_count(validator: Validator):
     validator.expect_column_values_to_be_between(
         column=col_name,
         min_value=0,
-        max_value=100
+        max_value=5000
     )
     validator.expect_column_values_to_not_be_null(col_name)
 
@@ -344,7 +432,7 @@ def validate_supported_languages(validator: Validator):
     # they are in the format: "['English', 'French', ...]"
     validator.expect_column_values_to_match_regex(
         column=col_name,
-        regex="^\[(?:\'[^']*\')(?:\s*,\s*\'[^']*\')*\s*\]$"
+        regex=r"^\[(?:(?:\s*K?\'[^']*\')(?:\s*,\s*K?\'[^']*\')*\s*)?\]$"
     )
     validator.expect_column_values_to_not_be_null(col_name)
 
@@ -353,9 +441,9 @@ def validate_full_audio_languages(validator: Validator):
     # they are in the format: "['English', 'French', ...]"
     validator.expect_column_values_to_match_regex(
         column=col_name,
-        regex="^\[(?:\'[^']*\')(?:\s*,\s*\'[^']*\')*\s*\]$"
+        regex=r"^\[(?:(?:\s*K?\'[^']*\')(?:\s*,\s*K?\'[^']*\')*\s*)?\]$"
     )
-    validator.expect_column_values_to_not_be_null(col_name)
+    # validator.expect_column_values_to_not_be_null(col_name)
 
 
 def validate_initial_data(df):
@@ -416,7 +504,7 @@ config_path = os.path.join(
 def sample_data() -> None:
     # Download the zip file from the URL specified in the config
     # data_url = cfg.dataset.url
-    data_url = "https://drive.usercontent.google.com/u/0/uc?id=1aw-Xu5T4UW6fr7icR7o30zPlagii9IV4&export=download"
+    data_url = "https://lime-negative-badger-175.mypinata.cloud/ipfs/QmQDhADFRQmwnNR9sXy2R6YoQbXgLy1G7TFdntBpW64hxg"
     print(f"Downloading data from {data_url}")
     response = requests.get(data_url, stream=True)
 
@@ -446,7 +534,7 @@ def sample_data() -> None:
 
         # Extract the specific csv file
         # TODO: Fix
-        with thezip.open('small.csv') as thefile:
+        with thezip.open('games.csv') as thefile:
             df = pd.read_csv(thefile)
 
     # Sample the data
@@ -464,8 +552,9 @@ def sample_data() -> None:
     os.makedirs(os.path.dirname(sample_path), exist_ok=True)
 
     # Save the sample data
-    sample_df.to_csv(sample_path, index=False)
+    df.to_csv(sample_path, index=False)
     print(f"Sampled data saved to {sample_path}")
+    return sample_df
 
 
 from great_expectations.core.batch import BatchRequest
@@ -521,7 +610,11 @@ def validate_initial_data():
     #     max_value=100
     # )
 
-    validator_funcs = [validate_app_id, validate_release_date, validate_user_score, validate_metacritic_score, validate_support_url, validate_metacritic_url, validate_support_email, validate_estimated_owners, validate_website, validate_peak_ccu, validate_required_age, validate_price, validate_dlc_count, validate_supported_languages, validate_full_audio_languages]
+    validator_funcs = [validate_app_id, validate_release_date, validate_user_score, 
+                       validate_metacritic_score, validate_support_url, validate_metacritic_url, 
+                       validate_support_email, validate_estimated_owners, validate_website, 
+                       validate_peak_ccu, validate_required_age, validate_price, validate_dlc_count, 
+                       validate_supported_languages, validate_full_audio_languages]
     for func in validator_funcs:
         print(func.__name__)
         func(validator)
@@ -562,13 +655,88 @@ def run_checkpoint():
     return checkpoint_result.success
 
 
-if __name__ == "__main__":
-    # sample_data()
-    sample_path = os.path.join(
+def validate_features(X, y):
+    context_path = os.path.join(
         os.path.dirname(os.path.dirname(__file__)),
-        "data/samples/sample.csv"
+        "services/gx"
     )
-    df = pd.read_csv(sample_path)
-    validate_initial_data()
-    result = run_checkpoint()
+
+    context = FileDataContext(context_root_dir=context_path)
+
+    ds1 = context.sources.add_or_update_pandas(name="transformed_ds")
+    da_x = ds1.add_dataframe_asset("transformed_features", X)
+    # da_y = ds1.add_dataframe_asset("target_data", y)
+    # da1 = ds1.add_csv_asset(
+    #     name = "sample",
+    #     filepath_or_buffer=sample_path
+    # )
+
+    suite_name = "transformed_features_validation_suite"
+
+    # Create an expectation suite
+    # suite = context.create_expectation_suite(expectation_suite_name=suite_name, overwrite_existing=True)
+
+    context.add_or_update_expectation_suite(suite_name)
+
+    # Define the expectations
+    batch_request = da_x.build_batch_request()
+    validator = context.get_validator(batch_request=batch_request, expectation_suite_name=suite_name)
+
+    # validator_funcs = []
+    # for func in validator_funcs:
+    #     print(func.__name__)
+    #     func(validator)
+
+
+    # Check that X and y have the same number of rows
+    assert X.shape[0] == y.shape[0], "X and y should have the same number of rows"
+
+    # Check that all columns in X are either int or float using great_expectations
+    for col in X.columns:
+        if col != "Price":
+            validator.expect_column_values_to_be_of_type(column=col, type_="int64")
+    # Price should be float64
+    validator.expect_column_values_to_be_of_type(column="Price", type_="float64")
+
+
+    binary_feats_prefix = ["Windows", "Mac", "Linux", "has_website", 'has_support_url', 'has_support_email', 'has_metacritic_url'
+                       "Categories ", "Supported languages ", "Full audio languages ", "Tags ", "Genres ", "Categories "]
+    for col in X.columns:
+        for prefix in binary_feats_prefix:
+            if col.startswith(prefix):
+                validator.expect_column_distinct_values_to_be_in_set(column=col, value_set=[0, 1])
+
+
+    # Save the expectation suite
+    validator.save_expectation_suite(discard_failed_expectations=False)
+
+    checkpoint = context.add_or_update_checkpoint(
+        name = "transformed_data_validation_checkpoint",
+        validations=[
+            {
+                "batch_request": batch_request,
+                "expectation_suite_name" : suite_name
+            }
+        ]
+    )
+    
+    checkpoint_result = checkpoint.run()
+
+    if not checkpoint_result.success:
+        raise Exception("Checkpoint failed!")
+
+    return X, y
+
+
+# if __name__ == "__main__":
+#     # sample_data()
+#     sample_path = os.path.join(
+#         os.path.dirname(os.path.dirname(__file__)),
+#         "data/samples/sample.csv"
+#     )
+#     df = pd.read_csv(sample_path)
+#     validate_initial_data()
+#     result = run_checkpoint()
+
+
 

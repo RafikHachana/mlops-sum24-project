@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/eaf5177cfe164ce4bd061edf3e18919f/artifacts
+end_time: 1721752833292
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: eaf5177cfe164ce4bd061edf3e18919f
+run_name: sincere-goose-554
+run_uuid: eaf5177cfe164ce4bd061edf3e18919f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721752827074
+status: 4
+tags: []
+user_id: rafik

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/3a1dbfde109d494683cc47b51a0ff00b/artifacts
+end_time: 1721813509741
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 3a1dbfde109d494683cc47b51a0ff00b
+run_name: suave-perch-127
+run_uuid: 3a1dbfde109d494683cc47b51a0ff00b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721813487721
+status: 3
+tags: []
+user_id: rafik

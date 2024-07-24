@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/687949878bd44520bc4e69d6a9782b9f/artifacts
+end_time: 1721814356020
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 687949878bd44520bc4e69d6a9782b9f
+run_name: carefree-boar-27
+run_uuid: 687949878bd44520bc4e69d6a9782b9f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721814349446
+status: 4
+tags: []
+user_id: rafik

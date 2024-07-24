@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/7d78201ce4674891ac9a034b9522a4f8/artifacts
+end_time: 1721587910028
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 7d78201ce4674891ac9a034b9522a4f8
+run_name: unique-bat-955
+run_uuid: 7d78201ce4674891ac9a034b9522a4f8
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721587903490
+status: 4
+tags: []
+user_id: rafik

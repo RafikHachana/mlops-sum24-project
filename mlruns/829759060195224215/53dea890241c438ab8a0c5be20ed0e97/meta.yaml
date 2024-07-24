@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/829759060195224215/53dea890241c438ab8a0c5be20ed0e97/artifacts
+end_time: 1721718905415
+entry_point_name: ''
+experiment_id: '829759060195224215'
+lifecycle_stage: active
+run_id: 53dea890241c438ab8a0c5be20ed0e97
+run_name: multi_run_linear_regression_neg_mean_squared_error_-2_961319831229372e+45
+run_uuid: 53dea890241c438ab8a0c5be20ed0e97
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721718897959
+status: 3
+tags: []
+user_id: rafik

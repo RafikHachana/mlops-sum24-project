@@ -1,0 +1,14 @@
+aliases: []
+creation_timestamp: 1721813261724
+current_stage: None
+description: null
+last_updated_timestamp: 1721813261724
+name: linear_regression
+run_id: 494edc7723c44d91aa28f353e0ab87c7
+run_link: null
+source: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/829759060195224215/494edc7723c44d91aa28f353e0ab87c7/artifacts/basic_lr
+status: READY
+status_message: null
+storage_location: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/829759060195224215/494edc7723c44d91aa28f353e0ab87c7/artifacts/basic_lr
+user_id: null
+version: 44

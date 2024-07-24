@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/45eeec232f1940b4a1673496ec058bc0/artifacts
+end_time: 1721750752528
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 45eeec232f1940b4a1673496ec058bc0
+run_name: adaptable-dove-759
+run_uuid: 45eeec232f1940b4a1673496ec058bc0
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721750752486
+status: 4
+tags: []
+user_id: rafik

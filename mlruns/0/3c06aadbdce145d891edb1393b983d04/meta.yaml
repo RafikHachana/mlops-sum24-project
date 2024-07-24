@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/3c06aadbdce145d891edb1393b983d04/artifacts
+end_time: 1721751700087
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 3c06aadbdce145d891edb1393b983d04
+run_name: clumsy-yak-355
+run_uuid: 3c06aadbdce145d891edb1393b983d04
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721751694146
+status: 4
+tags: []
+user_id: rafik

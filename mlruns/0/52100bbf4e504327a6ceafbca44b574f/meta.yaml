@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/52100bbf4e504327a6ceafbca44b574f/artifacts
+end_time: 1721753858477
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 52100bbf4e504327a6ceafbca44b574f
+run_name: sassy-goat-231
+run_uuid: 52100bbf4e504327a6ceafbca44b574f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721753846618
+status: 3
+tags: []
+user_id: rafik

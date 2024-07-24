@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/e7661f7b7e334539bc7414d353cd665a/artifacts
+end_time: 1721814285296
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: e7661f7b7e334539bc7414d353cd665a
+run_name: marvelous-goose-502
+run_uuid: e7661f7b7e334539bc7414d353cd665a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721814278754
+status: 4
+tags: []
+user_id: rafik

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/2ee5d5fb72fe4c56abd4b53800882711/artifacts
+end_time: 1721773186324
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 2ee5d5fb72fe4c56abd4b53800882711
+run_name: respected-mare-662
+run_uuid: 2ee5d5fb72fe4c56abd4b53800882711
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721773179577
+status: 3
+tags: []
+user_id: rafik

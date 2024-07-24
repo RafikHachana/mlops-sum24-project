@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/ed385cdc575347819972361de9f3292c/artifacts
+end_time: 1721812751808
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: ed385cdc575347819972361de9f3292c
+run_name: secretive-wasp-685
+run_uuid: ed385cdc575347819972361de9f3292c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721812732916
+status: 3
+tags: []
+user_id: rafik

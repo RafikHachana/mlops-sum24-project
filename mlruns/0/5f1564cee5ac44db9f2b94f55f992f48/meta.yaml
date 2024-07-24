@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/5f1564cee5ac44db9f2b94f55f992f48/artifacts
+end_time: 1721813908480
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 5f1564cee5ac44db9f2b94f55f992f48
+run_name: likeable-newt-666
+run_uuid: 5f1564cee5ac44db9f2b94f55f992f48
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721813903860
+status: 3
+tags: []
+user_id: rafik

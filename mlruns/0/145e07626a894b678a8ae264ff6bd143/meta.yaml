@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/145e07626a894b678a8ae264ff6bd143/artifacts
+end_time: 1721772417105
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 145e07626a894b678a8ae264ff6bd143
+run_name: learned-bird-76
+run_uuid: 145e07626a894b678a8ae264ff6bd143
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721772396729
+status: 4
+tags: []
+user_id: rafik

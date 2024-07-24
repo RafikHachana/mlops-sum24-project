@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/b6b6cbcce90a47bdb0cab7f8aa02f137/artifacts
+end_time: 1721680288906
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: b6b6cbcce90a47bdb0cab7f8aa02f137
+run_name: masked-bug-192
+run_uuid: b6b6cbcce90a47bdb0cab7f8aa02f137
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721680264610
+status: 3
+tags: []
+user_id: rafik

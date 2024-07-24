@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/8f2c2f0877db41d78e99de547033d8cd/artifacts
+end_time: 1721680063372
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 8f2c2f0877db41d78e99de547033d8cd
+run_name: bouncy-sloth-11
+run_uuid: 8f2c2f0877db41d78e99de547033d8cd
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721679932473
+status: 4
+tags: []
+user_id: rafik

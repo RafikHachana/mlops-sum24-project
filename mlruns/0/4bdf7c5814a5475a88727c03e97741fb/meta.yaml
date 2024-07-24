@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/4bdf7c5814a5475a88727c03e97741fb/artifacts
+end_time: 1721821867916
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 4bdf7c5814a5475a88727c03e97741fb
+run_name: adorable-ray-412
+run_uuid: 4bdf7c5814a5475a88727c03e97741fb
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721821660154
+status: 3
+tags: []
+user_id: rafik

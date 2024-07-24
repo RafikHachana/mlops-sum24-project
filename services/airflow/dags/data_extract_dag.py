@@ -1,7 +1,9 @@
 from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
+from airflow.operators.python import PythonOperator
+from airflow.models import Variable
 from airflow.utils.dates import days_ago
 import os
+import pandas as pd
 # import sys
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import subprocess
@@ -9,9 +11,11 @@ import sys
 import yaml
 
 # Ensure the path is correct for the project imports
-sys.path.append("/home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project")
+# sys.path.append("/home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project")
 
-from src.data import sample_data, validate_initial_data, run_checkpoint
+from data import sample_data, validate_initial_data, run_checkpoint
+
+PROJECT_ROOT = Variable.get("PROJECT_ROOT")
 
 # Define default arguments
 default_args = {
@@ -31,30 +35,25 @@ dag = DAG(
 )
 
 def extract_data(**kwargs):
-    # from hydra import initialize, compose
-    # initialize(config_path="../configs", job_name="sample_data_job")
+    from hydra import initialize, compose
+    initialize(config_path="../configs", job_name="sample_data_job")
     cfg = compose(config_name="config")
     sample_df = sample_data()
-    kwargs['ti'].xcom_push(key='sample_df', value=sample_df)
-
-def validate_data(**kwargs):
-    sample_df = kwargs['ti'].xcom_pull(key='sample_df', task_ids='extract_data')
-    validation_result = validate_initial_data(sample_df)
-    if not validation_result["success"]:
-        raise ValueError("Data validation failed.")
+    # kwargs['ti'].xcom_push(key='sample_df', value=sample_df)
 
 def version_data(**kwargs):
     # sample_df = kwargs['ti'].xcom_pull(key='sample_df', task_ids='extract_data')
     # Save the sample_df to CSV file
-    sample_path = '/home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/data/samples/sample.csv'
-    # sample_df.to_csv(sample_path, index=False)
+    sample_path = f'{PROJECT_ROOT}/data/samples/sample.csv'
+    sample_df = pd.read_csv(sample_path)
+    sample_df.to_csv(sample_path, index=False)
     
     # Add and commit the data version using DVC
     subprocess.run(['dvc', 'add', sample_path], check=True)
     subprocess.run(['dvc', 'commit', sample_path], check=True)
     
     # Update data_version.yaml
-    version_file = '/home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/configs/data_version.yaml'
+    version_file = f'{PROJECT_ROOT}/configs/data_version.yaml'
     with open(version_file, 'r') as f:
         version_data = yaml.safe_load(f)
     

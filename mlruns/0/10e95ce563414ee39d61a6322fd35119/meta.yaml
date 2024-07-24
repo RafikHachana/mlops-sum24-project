@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/10e95ce563414ee39d61a6322fd35119/artifacts
+end_time: 1721813951998
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 10e95ce563414ee39d61a6322fd35119
+run_name: capricious-chimp-978
+run_uuid: 10e95ce563414ee39d61a6322fd35119
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721813947071
+status: 4
+tags: []
+user_id: rafik

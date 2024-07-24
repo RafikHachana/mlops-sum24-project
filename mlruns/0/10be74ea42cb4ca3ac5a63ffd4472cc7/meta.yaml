@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/10be74ea42cb4ca3ac5a63ffd4472cc7/artifacts
+end_time: 1721717502643
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 10be74ea42cb4ca3ac5a63ffd4472cc7
+run_name: intrigued-bear-81
+run_uuid: 10be74ea42cb4ca3ac5a63ffd4472cc7
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721716043505
+status: 4
+tags: []
+user_id: rafik

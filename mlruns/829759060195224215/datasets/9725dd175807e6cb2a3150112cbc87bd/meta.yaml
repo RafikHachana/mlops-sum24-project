@@ -1,0 +1,24 @@
+digest: a7d2e572
+name: dataset
+profile: '{"num_rows": 11, "num_elements": 264}'
+schema: '{"mlflow_colspec": [{"type": "long", "name": "Peak CCU", "required": true},
+  {"type": "long", "name": "Required age", "required": true}, {"type": "double", "name":
+  "Price", "required": true}, {"type": "long", "name": "DLC count", "required": true},
+  {"type": "long", "name": "Windows", "required": true}, {"type": "long", "name":
+  "Mac", "required": true}, {"type": "long", "name": "Linux", "required": true}, {"type":
+  "long", "name": "Metacritic score", "required": true}, {"type": "long", "name":
+  "User score", "required": true}, {"type": "long", "name": "Positive", "required":
+  true}, {"type": "long", "name": "Negative", "required": true}, {"type": "long",
+  "name": "Achievements", "required": true}, {"type": "long", "name": "Recommendations",
+  "required": true}, {"type": "long", "name": "has_website", "required": true}, {"type":
+  "long", "name": "has_support_url", "required": true}, {"type": "long", "name": "has_support_email",
+  "required": true}, {"type": "long", "name": "has_metacritic_url", "required": true},
+  {"type": "long", "name": "num_movies", "required": true}, {"type": "long", "name":
+  "release_year", "required": true}, {"type": "long", "name": "release_month", "required":
+  true}, {"type": "long", "name": "release_day", "required": true}, {"type": "long",
+  "name": "estimated_owner_min", "required": true}, {"type": "long", "name": "estimated_owner_max",
+  "required": true}, {"type": "long", "name": "Average playtime two weeks", "required":
+  true}]}'
+source: '{"tags": {"mlflow.user": "rafik", "mlflow.source.name": "src/main.py", "mlflow.source.type":
+  "LOCAL"}}'
+source_type: code

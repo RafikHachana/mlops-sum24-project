@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/e9fb3626dfbb44a99abfda075843614d/artifacts
+end_time: 1721815638314
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: e9fb3626dfbb44a99abfda075843614d
+run_name: judicious-auk-950
+run_uuid: e9fb3626dfbb44a99abfda075843614d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721815631554
+status: 4
+tags: []
+user_id: rafik

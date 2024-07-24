@@ -1,0 +1,30 @@
+name: game_playtime_prediction
+
+
+entry_points:
+  main:
+    command: "python src/main.py --multirun"
+  validate:
+    command: "python src/validate.py"
+  transform:
+    command: "python3 services/airflow/dags/data_prepare.py"
+  deploy:
+    command: "bash scripts/deploy_docker.sh"
+  predict:
+    parameters:
+      example_version: 
+        type: string
+        default: "v5"
+      hostname:
+        type: string
+        default: "localhost"
+      port:
+        type: float
+        default: 8080
+      random_state:
+        type: float
+        default: 1
+      
+    # src/predict.py is decorated with @hydra.main to pass parameters at runtime
+    command: "python src/predict.py ++example_version={example_version} ++hostname={hostname} ++port={port} ++random_state={random_state}"
+

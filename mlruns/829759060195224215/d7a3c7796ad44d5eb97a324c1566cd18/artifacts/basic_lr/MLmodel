@@ -1,0 +1,44 @@
+artifact_path: basic_lr
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.11.9
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.5.0
+mlflow_version: 2.14.1
+model_size_bytes: 1439
+model_uuid: 76ea05b0db934266aea1bd7f263591f8
+run_id: d7a3c7796ad44d5eb97a324c1566cd18
+saved_input_example_info:
+  artifact_path: input_example.json
+  format: tf-serving
+  type: ndarray
+signature:
+  inputs: '[{"type": "long", "name": "Peak CCU", "required": true}, {"type": "long",
+    "name": "Required age", "required": true}, {"type": "double", "name": "Price",
+    "required": true}, {"type": "long", "name": "DLC count", "required": true}, {"type":
+    "long", "name": "Windows", "required": true}, {"type": "long", "name": "Mac",
+    "required": true}, {"type": "long", "name": "Linux", "required": true}, {"type":
+    "long", "name": "Metacritic score", "required": true}, {"type": "long", "name":
+    "User score", "required": true}, {"type": "long", "name": "Positive", "required":
+    true}, {"type": "long", "name": "Negative", "required": true}, {"type": "long",
+    "name": "Achievements", "required": true}, {"type": "long", "name": "Recommendations",
+    "required": true}, {"type": "long", "name": "has_website", "required": true},
+    {"type": "long", "name": "has_support_url", "required": true}, {"type": "long",
+    "name": "has_support_email", "required": true}, {"type": "long", "name": "has_metacritic_url",
+    "required": true}, {"type": "long", "name": "num_movies", "required": true}, {"type":
+    "long", "name": "release_year", "required": true}, {"type": "long", "name": "release_month",
+    "required": true}, {"type": "long", "name": "release_day", "required": true},
+    {"type": "long", "name": "estimated_owner_min", "required": true}, {"type": "long",
+    "name": "estimated_owner_max", "required": true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "float64", "shape": [-1]}}]'
+  params: null
+utc_time_created: '2024-07-24 10:01:15.251321'

@@ -1,0 +1,6 @@
+artifact_location: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/427146172149019669
+creation_time: 1721679984763
+experiment_id: '427146172149019669'
+last_update_time: 1721679984763
+lifecycle_stage: active
+name: random_forest_mlops_experiment

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/5400450b65a64dffaf493d440d537764/artifacts
+end_time: 1721814037393
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 5400450b65a64dffaf493d440d537764
+run_name: bright-sponge-611
+run_uuid: 5400450b65a64dffaf493d440d537764
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721814015951
+status: 3
+tags: []
+user_id: rafik
