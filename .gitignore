@@ -183,3 +183,4 @@ services/zenml/**/*.yaml
 services/zenml/**/*.yml
 
 *.db-journal
+data/*.zip
