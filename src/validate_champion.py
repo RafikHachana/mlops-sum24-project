@@ -24,6 +24,7 @@ giskard.models.cache.disable_cache()
 def main(cfg: DictConfig) -> None:
     version  = "v4"
     # version  = cfg.test_data_version
+    BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     df, _ = extract_data(BASE_PATH)
     df = df.sample(frac = 0.001, random_state = 88)
