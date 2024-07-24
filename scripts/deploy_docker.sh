@@ -4,7 +4,10 @@
 IMAGE_NAME="rafikhachana/mlops_deployment"
 CONTAINER_NAME="mlops_model"
 HEALTHCHECK_URL="http://localhost:8080/ping"
-
+set -a
+echo "Updating Dockerfile and directory with latest model..."
+export MLFLOW_TRACKING_URI="http://localhost:5000"
+mlflow models generate-dockerfile --model-uri models:/model_1@champion --env-manager local -d api
 # Build the Docker image
 echo "Building Docker image..."
 cd api
@@ -12,6 +15,7 @@ docker build -t $IMAGE_NAME .
 
 # Run the Docker container
 echo "Running Docker container..."
+docker rm -f $CONTAINER_NAME
 docker run --rm -d --name $CONTAINER_NAME -p 8080:8080 $IMAGE_NAME
 
 # Wait for the service to be up

@@ -243,14 +243,14 @@ def log_metadata(cfg, gs, X_train, y_train, X_test, y_test):
                 y_test_np = y_test_np.reshape(-1)
 
                 # Use mlflow.evaluate to log metrics and artifacts
-                eval_result = mlflow.evaluate(
-                    model=model_uri,  # Use the model URI
-                    data=X_test_np,
-                    targets=y_test_np,
-                    model_type="regressor",
-                    evaluators=["default"],
-                )
-                mlflow.log_metrics(eval_result["metrics"])
+                # eval_result = mlflow.evaluate(
+                #     model=model_uri,  # Use the model URI
+                #     data=X_test_np,
+                #     targets=y_test_np,
+                #     model_type="regressor",
+                #     evaluators=["default"],
+                # )
+                # mlflow.log_metrics(eval_result["metrics"])
 
                 eval_data = pd.DataFrame({'label': y_test_np, 'predictions': predictions})
                 eval_data.to_csv(f'child_predictions_{index}.csv', index=False)
@@ -305,10 +305,8 @@ def train(X_train, y_train, cfg):
         return_train_score=True
     )
 
-    print(f"Starting training ... ({class_name})")
 
     gs.fit(X_train, y_train)
 
-    print(f"Done training ... {class_name}")
 
     return gs

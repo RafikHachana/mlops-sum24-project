@@ -11,6 +11,7 @@ import giskard.models.cache
 import hydra
 import mlflow
 from omegaconf import DictConfig
+import numpy as np
 
 # BASE_PATH = "/home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project"
 
@@ -44,7 +45,7 @@ def main(cfg: DictConfig) -> None:
         # cat_columns=CATEGORICAL_COLUMNS  # List of categorical columns. Optional, but improves quality of results if available.
     )
 
-    model_name = "linear_regression"
+    model_name = "model_1"
 
     # # You can sweep over challenger aliases using Hydra
     # model_alias = cfg.model.best_model_alias
@@ -58,18 +59,19 @@ def main(cfg: DictConfig) -> None:
     # model_version = mv.version
 
     # transformer_version = cfg.data_transformer_version
-
+    mlflow.set_tracking_uri("http://localhost:5000")
 
     client = mlflow.MlflowClient()
 
     # Retrieve all challenger models
-    challenger_aliases = [f"challenger{i}" for i in range(1, 3)]
+    challenger_aliases = [f"challenger{i}" for i in range(1, 55)]
     challenger_models = []
 
     for alias in challenger_aliases:
         try:
             mv = client.get_model_version_by_alias(name=model_name, alias=alias)
-            current_model: mlflow.pyfunc.PyFuncModel = mlflow.sklearn.load_model(f"models:/{model_name}/{mv.version}")
+            print("Version", mv)
+            current_model: mlflow.pyfunc.PyFuncModel = mlflow.sklearn.load_model(mv.source)
             challenger_models.append((alias, current_model, mv.version))
         except Exception as e:
             print(f"Failed to retrieve model with alias {alias}: {e}")
@@ -89,7 +91,10 @@ def main(cfg: DictConfig) -> None:
 
             # print(X.columns)
 
-            return model.predict(X)
+            result = model.predict(X.to_numpy().astype(np.float32)).reshape(-1)
+            return result
+        
+        
 
         predictions = predict(df.drop(columns='Average playtime two weeks').head())
         # print(predictions)
@@ -120,7 +125,7 @@ def main(cfg: DictConfig) -> None:
 
         test1 = giskard.testing.test_mae(model = giskard_model, 
                                         dataset = giskard_dataset,
-                                        threshold=1e40)
+                                        threshold=100)
 
         test_suite.add_test(test1)
 

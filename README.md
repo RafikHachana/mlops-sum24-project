@@ -20,7 +20,7 @@ Project Repository for the MLOps course project, Summer Semester 2024, Innopolis
 2. Create a deployment of the model in the `api` directory (This will also create a Dockerfile for direct MLflow deployment):
 
    ```
-   mlflow models generate-dockerfile --model-uri models:/linear_regression@champion --env-manager local -d api
+   MLFLOW_TRACKING_URI="http://localhost:5000" mlflow models generate-dockerfile --model-uri models:/model_1@champion --env-manager local -d api
    ```
 
 3. Run the API:

@@ -15,6 +15,7 @@ import giskard.models.cache
 import hydra
 import mlflow
 from omegaconf import DictConfig
+import numpy as np
 
 # BASE_PATH = "/home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project"
 
@@ -81,9 +82,8 @@ def main(cfg: DictConfig) -> None:
         if 'metric' in X.columns:
             X.drop(columns='metric', inplace=True)
 
-        # print(X.columns)
-
-        return model.predict(X)
+        result = model.predict(X.to_numpy().astype(np.float32)).reshape(-1)
+        return result
 
     predictions = predict(df.drop(columns='Average playtime two weeks').head())
     # print(predictions)
@@ -114,7 +114,7 @@ def main(cfg: DictConfig) -> None:
 
     test1 = giskard.testing.test_mae(model = giskard_model, 
                                     dataset = giskard_dataset,
-                                    threshold=1e40)
+                                    threshold=100)
 
     test_suite.add_test(test1)
 
