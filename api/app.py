@@ -3,8 +3,14 @@ from flask import Flask, request, jsonify, abort, make_response
 import mlflow
 import mlflow.pyfunc
 import os
+import requests
+import json
+import pandas as pd
+import yaml
 
 BASE_PATH = os.path.expandvars("$PROJECTPATH")
+BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 model = mlflow.pyfunc.load_model(os.path.join(BASE_PATH, "api", "model_dir"))
 
@@ -35,22 +41,24 @@ def home():
 # /predict endpoint
 @app.route("/predict", methods = ["POST"])
 def predict():
+    # Get schema
+
+    schema = {x['name']: x['type'] for x in json.loads(yaml.safe_load(str(model.metadata))['signature']["inputs"])}
 	
     # EDIT THIS ENDPOINT
+    print(json.loads(request.data.decode("utf-8")))
+    payload = json.loads(request.data.decode("utf-8"))
 
-    payload = example
+    inputs = pd.DataFrame({k: [int(v) if schema[k] in ["int", "long"] else float(v)] for k,v in payload['inputs'].items()})
 
-    response = requests.post(
-        url=f"http://localhost:{cfg.port}/invocations",
-        data=payload,
-        headers={"Content-Type": "application/json"},
-    )
+    response = model.predict(inputs)
 
     # EXAMPLE
-    content = str(request.data)
-    response = make_response(content, 200)
-    response.headers["content-type"] = "application/json"
-    return jsonify({'result': 'yes', 'prob': '0.7'})
+    # content = str(request.data)
+    # response = make_response(content, 200)
+    # response.headers["content-type"] = "application/json"
+    print(response)
+    return jsonify({"prediction":response[0]})
 
 # This will run a local server to accept requests to the API.
 if __name__ == "__main__":

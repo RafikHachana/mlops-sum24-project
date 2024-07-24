@@ -7,45 +7,19 @@ import json
 import requests
 import numpy as np
 import pandas as pd
-
+import yaml
 # cfg = init_hydra()
 
+port_number = 5001
+
+model_sig = requests.get(f"http://localhost:{port_number}/info").text
+
+inputs_list = json.loads(yaml.safe_load(model_sig)['signature']["inputs"])
 # You need to define a parameter for each column in your raw dataset
-def predict(age = None,
-            job = None,
-            marital = None,
-            education = None,
-            default = None,
-            balance = None,
-            housing = None,
-            loan = None,
-            contact = None,
-            day_of_week = None,
-            month = None,
-            duration = None,
-            campaign = None,
-            pdays = None,
-            previous = None,
-            poutcome = None):
+def predict(*args):
     
     # This will be a dict of column values for input data sample
-    features = {"age": age, 
-        "balance": balance, 
-        "duration": duration, 
-        "campaign": campaign, 
-        "pdays": pdays, 
-        "previous": previous,
-        "default": default, 
-        "housing": housing, 
-        "loan": loan,
-        "day_of_week" : day_of_week,
-        "month": month,
-        "job": job,
-        "marital": marital,
-        "education": education,
-        "contact": contact,
-        "poutcome": poutcome
-    }
+    features = dict(zip([x['name'] for x in inputs_list], args))
     
     # print(features)
     
@@ -54,7 +28,7 @@ def predict(age = None,
     
     # This will read the saved transformers "v4" from ZenML artifact store
     # And only transform the input data (no fit here).
-    X = None 
+    # X = None 
     # transform_data(
     #                     df = raw_df, 
     #                     cfg = cfg, 
@@ -65,27 +39,42 @@ def predict(age = None,
     #                   )
     
     # Convert it into JSON
-    example = X.iloc[0,:]
+    # example = X.iloc[0,:]
 
     example = json.dumps( 
-        { "inputs": example.to_dict() }
+        { "inputs": features }
     )
 
     payload = example
-    port_number = 51553
 
     # Send POST request with the payload to the deployed Model API
     # Here you can pass the port number at runtime using Hydra
     response = requests.post(
-        url=f"http://localhost:{port_number}/invocations",
-        data=payload,
+        url=f"http://localhost:5001/predict",
+        json={ "inputs": features },
         headers={"Content-Type": "application/json"},
     )
     
+    print(response.json())
     # Change this to some meaningful output for your model
     # For classification, it returns the predicted label
     # For regression, it returns the predicted value
-    return response.json()
+    return response.json()['prediction']
+
+# Mapping MLflow types to Gradio components
+def mlflow_to_gradio(input_type, label):
+    if label in ['Windows', 'Linux', 'Mac']:
+        return gr.Checkbox(label=label)
+    if input_type in ["long", "integer", "int"]:
+        return gr.Number(label=label)
+    elif input_type == "double":
+        return gr.Number(label=label, precision=2)
+    elif input_type == "float":
+        return gr.Number(label=label)
+    elif input_type == "string":
+        return gr.Textbox(label=label)
+    else:
+        return gr.Textbox(label=label)
 
 # Only one interface is enough
 demo = gr.Interface(
@@ -96,26 +85,11 @@ demo = gr.Interface(
     # will populated from the values of these input components
     inputs = [
         # Select proper components for data types of the columns in your raw dataset
-        gr.Number(label = "age"), 
-        gr.Text(label="job"),
-        gr.Text(label="marital"),
-        gr.Text(label="education"),
-        gr.Dropdown(label="default", choices=["no", "yes"]),   
-        gr.Number(label = "balance"), 
-        gr.Dropdown(label="housing", choices=["no", "yes"]),   
-        gr.Dropdown(label="loan", choices=["no", "yes"]),   
-        gr.Text(label="contact"),
-        gr.Text(label="day_of_week"),
-        gr.Text(label="month"),
-        gr.Number(label = "duration"), 
-        gr.Number(label = "campaign"), 
-        gr.Number(label = "pdays"), 
-        gr.Number(label = "previous"),
-        gr.Text(label="poutcome"),
+        mlflow_to_gradio(input_type=x['type'], label=x['name']) for x in inputs_list
     ],
     
     # The outputs here will get the returned value from `predict` function
-    outputs = gr.Text(label="prediction result"),
+    outputs = gr.Text(label="Prediction result"),
     
     # This will provide the user with examples to test the API
     # examples="data/examples"
