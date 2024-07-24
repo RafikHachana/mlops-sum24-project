@@ -441,7 +441,7 @@ zc.lockfile==3.0.post1
 zenml==0.58.2
 zipp==3.19.2
 
-zstandard==0.22.0
+scorch
 
 zstandard==0.22.0
 seaborn
