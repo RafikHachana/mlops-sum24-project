@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/11bd02d3077e476fa47d965405aad417/artifacts
+end_time: 1721752891103
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 11bd02d3077e476fa47d965405aad417
+run_name: delightful-ape-890
+run_uuid: 11bd02d3077e476fa47d965405aad417
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721752884979
+status: 4
+tags: []
+user_id: rafik

@@ -15,6 +15,9 @@ src/outputs/
 datastore
 .vscode
 outputs
+services/zenml
+multirun
+venv*
 
 # Distribution / packaging
 .Python

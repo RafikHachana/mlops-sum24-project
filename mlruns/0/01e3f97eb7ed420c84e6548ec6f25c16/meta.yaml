@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/01e3f97eb7ed420c84e6548ec6f25c16/artifacts
+end_time: 1721585796305
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 01e3f97eb7ed420c84e6548ec6f25c16
+run_name: beautiful-stoat-724
+run_uuid: 01e3f97eb7ed420c84e6548ec6f25c16
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721585788636
+status: 4
+tags: []
+user_id: rafik

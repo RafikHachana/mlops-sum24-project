@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/dbb7a88d4f69499a8bc0e94616449110/artifacts
+end_time: 1721751191483
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: dbb7a88d4f69499a8bc0e94616449110
+run_name: big-bee-886
+run_uuid: dbb7a88d4f69499a8bc0e94616449110
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721751184596
+status: 4
+tags: []
+user_id: rafik

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/ddc5a4a49869429999ab09fe6c3f1a8e/artifacts
+end_time: 1721718906844
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: ddc5a4a49869429999ab09fe6c3f1a8e
+run_name: fearless-snail-440
+run_uuid: ddc5a4a49869429999ab09fe6c3f1a8e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721718881170
+status: 3
+tags: []
+user_id: rafik

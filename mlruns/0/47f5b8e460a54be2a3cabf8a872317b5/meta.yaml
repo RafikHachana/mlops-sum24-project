@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/47f5b8e460a54be2a3cabf8a872317b5/artifacts
+end_time: 1721734847789
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 47f5b8e460a54be2a3cabf8a872317b5
+run_name: placid-midge-847
+run_uuid: 47f5b8e460a54be2a3cabf8a872317b5
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721734635085
+status: 4
+tags: []
+user_id: rafik

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/292a194886274c93a721a97be25323bd/artifacts
+end_time: 1721815471284
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 292a194886274c93a721a97be25323bd
+run_name: capricious-shrimp-47
+run_uuid: 292a194886274c93a721a97be25323bd
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721815464517
+status: 4
+tags: []
+user_id: rafik

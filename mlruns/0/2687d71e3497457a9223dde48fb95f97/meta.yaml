@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/2687d71e3497457a9223dde48fb95f97/artifacts
+end_time: 1721813771178
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 2687d71e3497457a9223dde48fb95f97
+run_name: carefree-fish-259
+run_uuid: 2687d71e3497457a9223dde48fb95f97
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721813766591
+status: 3
+tags: []
+user_id: rafik

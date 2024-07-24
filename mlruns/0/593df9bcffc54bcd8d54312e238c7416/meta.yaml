@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/593df9bcffc54bcd8d54312e238c7416/artifacts
+end_time: 1721750899411
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 593df9bcffc54bcd8d54312e238c7416
+run_name: bittersweet-cow-54
+run_uuid: 593df9bcffc54bcd8d54312e238c7416
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721750893857
+status: 4
+tags: []
+user_id: rafik

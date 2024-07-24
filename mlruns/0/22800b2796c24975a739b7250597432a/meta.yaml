@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/22800b2796c24975a739b7250597432a/artifacts
+end_time: 1721821250219
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 22800b2796c24975a739b7250597432a
+run_name: thundering-fish-747
+run_uuid: 22800b2796c24975a739b7250597432a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721821051420
+status: 3
+tags: []
+user_id: rafik

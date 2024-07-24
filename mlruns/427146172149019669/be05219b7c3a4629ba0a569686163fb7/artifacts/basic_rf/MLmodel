@@ -1,0 +1,521 @@
+artifact_path: basic_rf
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.11.9
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.5.1
+mlflow_version: 2.14.2
+model_size_bytes: 22046
+model_uuid: 7b63abbb2e8941cb82e84f8e76cea469
+run_id: be05219b7c3a4629ba0a569686163fb7
+saved_input_example_info:
+  artifact_path: input_example.json
+  format: tf-serving
+  type: ndarray
+signature:
+  inputs: '[{"type": "long", "name": "Peak CCU", "required": true}, {"type": "long",
+    "name": "Required age", "required": true}, {"type": "double", "name": "Price",
+    "required": true}, {"type": "long", "name": "DLC count", "required": true}, {"type":
+    "long", "name": "Windows", "required": true}, {"type": "long", "name": "Mac",
+    "required": true}, {"type": "long", "name": "Linux", "required": true}, {"type":
+    "long", "name": "Metacritic score", "required": true}, {"type": "long", "name":
+    "User score", "required": true}, {"type": "long", "name": "Positive", "required":
+    true}, {"type": "long", "name": "Negative", "required": true}, {"type": "long",
+    "name": "Achievements", "required": true}, {"type": "long", "name": "Recommendations",
+    "required": true}, {"type": "long", "name": "has_website", "required": true},
+    {"type": "long", "name": "has_support_url", "required": true}, {"type": "long",
+    "name": "has_support_email", "required": true}, {"type": "long", "name": "has_metacritic_url",
+    "required": true}, {"type": "long", "name": "Categories Steam Workshop", "required":
+    true}, {"type": "long", "name": "Categories VR Only", "required": true}, {"type":
+    "long", "name": "Categories Tracked Controller Support", "required": true}, {"type":
+    "long", "name": "Categories Steam Turn Notifications", "required": true}, {"type":
+    "long", "name": "Categories Valve Anti-Cheat enabled", "required": true}, {"type":
+    "long", "name": "Categories VR Supported", "required": true}, {"type": "long",
+    "name": "Categories Captions available", "required": true}, {"type": "long", "name":
+    "Categories LAN PvP", "required": true}, {"type": "long", "name": "Categories
+    Steam Leaderboards", "required": true}, {"type": "long", "name": "Categories Single-player",
+    "required": true}, {"type": "long", "name": "Categories Includes level editor",
+    "required": true}, {"type": "long", "name": "Categories Cross-Platform Multiplayer",
+    "required": true}, {"type": "long", "name": "Categories Commentary available",
+    "required": true}, {"type": "long", "name": "Categories Online PvP", "required":
+    true}, {"type": "long", "name": "Categories Remote Play Together", "required":
+    true}, {"type": "long", "name": "Categories VR Support", "required": true}, {"type":
+    "long", "name": "Categories Co-op", "required": true}, {"type": "long", "name":
+    "Categories Shared/Split Screen PvP", "required": true}, {"type": "long", "name":
+    "Categories Remote Play on TV", "required": true}, {"type": "long", "name": "Categories
+    SteamVR Collectibles", "required": true}, {"type": "long", "name": "Categories
+    Online Co-op", "required": true}, {"type": "long", "name": "Categories Remote
+    Play on Phone", "required": true}, {"type": "long", "name": "Categories Remote
+    Play on Tablet", "required": true}, {"type": "long", "name": "Categories In-App
+    Purchases", "required": true}, {"type": "long", "name": "Categories Stats", "required":
+    true}, {"type": "long", "name": "Categories Full controller support", "required":
+    true}, {"type": "long", "name": "Categories Includes Source SDK", "required":
+    true}, {"type": "long", "name": "Categories Steam Achievements", "required": true},
+    {"type": "long", "name": "Categories Steam Trading Cards", "required": true},
+    {"type": "long", "name": "Categories Shared/Split Screen", "required": true},
+    {"type": "long", "name": "Categories Steam Cloud", "required": true}, {"type":
+    "long", "name": "Categories Multi-player", "required": true}, {"type": "long",
+    "name": "Categories Shared/Split Screen Co-op", "required": true}, {"type": "long",
+    "name": "Categories Partial Controller Support", "required": true}, {"type": "long",
+    "name": "Categories PvP", "required": true}, {"type": "long", "name": "Categories
+    MMO", "required": true}, {"type": "long", "name": "Categories LAN Co-op", "required":
+    true}, {"type": "long", "name": "Genres Software Training", "required": true},
+    {"type": "long", "name": "Genres Simulation", "required": true}, {"type": "long",
+    "name": "Genres Utilities", "required": true}, {"type": "long", "name": "Genres
+    Massively Multiplayer", "required": true}, {"type": "long", "name": "Genres Audio
+    Production", "required": true}, {"type": "long", "name": "Genres Adventure", "required":
+    true}, {"type": "long", "name": "Genres Free to Play", "required": true}, {"type":
+    "long", "name": "Genres RPG", "required": true}, {"type": "long", "name": "Genres
+    Animation & Modeling", "required": true}, {"type": "long", "name": "Genres Nudity",
+    "required": true}, {"type": "long", "name": "Genres Gore", "required": true},
+    {"type": "long", "name": "Genres Web Publishing", "required": true}, {"type":
+    "long", "name": "Genres Violent", "required": true}, {"type": "long", "name":
+    "Genres Strategy", "required": true}, {"type": "long", "name": "Genres Photo Editing",
+    "required": true}, {"type": "long", "name": "Genres Early Access", "required":
+    true}, {"type": "long", "name": "Genres Education", "required": true}, {"type":
+    "long", "name": "Genres Design & Illustration", "required": true}, {"type": "long",
+    "name": "Genres Action", "required": true}, {"type": "long", "name": "Genres Sexual
+    Content", "required": true}, {"type": "long", "name": "Genres Indie", "required":
+    true}, {"type": "long", "name": "Genres Sports", "required": true}, {"type": "long",
+    "name": "Genres Game Development", "required": true}, {"type": "long", "name":
+    "Genres Video Production", "required": true}, {"type": "long", "name": "Genres
+    Accounting", "required": true}, {"type": "long", "name": "Genres Casual", "required":
+    true}, {"type": "long", "name": "Genres Racing", "required": true}, {"type": "long",
+    "name": "Tags Cricket", "required": true}, {"type": "long", "name": "Tags Science",
+    "required": true}, {"type": "long", "name": "Tags Skating", "required": true},
+    {"type": "long", "name": "Tags On-Rails Shooter", "required": true}, {"type":
+    "long", "name": "Tags Demons", "required": true}, {"type": "long", "name": "Tags
+    Action RTS", "required": true}, {"type": "long", "name": "Tags Co-op Campaign",
+    "required": true}, {"type": "long", "name": "Tags Turn-Based Strategy", "required":
+    true}, {"type": "long", "name": "Tags Rock Music", "required": true}, {"type":
+    "long", "name": "Tags Story Rich", "required": true}, {"type": "long", "name":
+    "Tags Web Publishing", "required": true}, {"type": "long", "name": "Tags Rogue-lite",
+    "required": true}, {"type": "long", "name": "Tags Team-Based", "required": true},
+    {"type": "long", "name": "Tags 1980s", "required": true}, {"type": "long", "name":
+    "Tags Jump Scare", "required": true}, {"type": "long", "name": "Tags Drama", "required":
+    true}, {"type": "long", "name": "Tags Unforgiving", "required": true}, {"type":
+    "long", "name": "Tags Flight", "required": true}, {"type": "long", "name": "Tags
+    Rugby", "required": true}, {"type": "long", "name": "Tags Horses", "required":
+    true}, {"type": "long", "name": "Tags Faith", "required": true}, {"type": "long",
+    "name": "Tags Difficult", "required": true}, {"type": "long", "name": "Tags Video
+    Production", "required": true}, {"type": "long", "name": "Tags Souls-like", "required":
+    true}, {"type": "long", "name": "Tags Otome", "required": true}, {"type": "long",
+    "name": "Tags Racing", "required": true}, {"type": "long", "name": "Tags Experimental",
+    "required": true}, {"type": "long", "name": "Tags Psychological", "required":
+    true}, {"type": "long", "name": "Tags Roguelike Deckbuilder", "required": true},
+    {"type": "long", "name": "Tags Audio Production", "required": true}, {"type":
+    "long", "name": "Tags Loot", "required": true}, {"type": "long", "name": "Tags
+    Silent Protagonist", "required": true}, {"type": "long", "name": "Tags Animation
+    & Modeling", "required": true}, {"type": "long", "name": "Tags Dark Comedy", "required":
+    true}, {"type": "long", "name": "Tags Vikings", "required": true}, {"type": "long",
+    "name": "Tags Metroidvania", "required": true}, {"type": "long", "name": "Tags
+    Aliens", "required": true}, {"type": "long", "name": "Tags Naval", "required":
+    true}, {"type": "long", "name": "Tags Western", "required": true}, {"type": "long",
+    "name": "Tags Software", "required": true}, {"type": "long", "name": "Tags Rogue-like",
+    "required": true}, {"type": "long", "name": "Tags Ambient", "required": true},
+    {"type": "long", "name": "Tags Time Manipulation", "required": true}, {"type":
+    "long", "name": "Tags Hidden Object", "required": true}, {"type": "long", "name":
+    "Tags Colony Sim", "required": true}, {"type": "long", "name": "Tags Parkour",
+    "required": true}, {"type": "long", "name": "Tags Side Scroller", "required":
+    true}, {"type": "long", "name": "Tags Text-Based", "required": true}, {"type":
+    "long", "name": "Tags Spelling", "required": true}, {"type": "long", "name": "Tags
+    Narration", "required": true}, {"type": "long", "name": "Tags 3D Platformer",
+    "required": true}, {"type": "long", "name": "Tags Dinosaurs", "required": true},
+    {"type": "long", "name": "Tags Foreign", "required": true}, {"type": "long", "name":
+    "Tags Mechs", "required": true}, {"type": "long", "name": "Tags Bikes", "required":
+    true}, {"type": "long", "name": "Tags Football", "required": true}, {"type": "long",
+    "name": "Tags Steam Machine", "required": true}, {"type": "long", "name": "Tags
+    Life Sim", "required": true}, {"type": "long", "name": "Tags Offroad", "required":
+    true}, {"type": "long", "name": "Tags Third-Person Shooter", "required": true},
+    {"type": "long", "name": "Tags Survival", "required": true}, {"type": "long",
+    "name": "Tags Psychedelic", "required": true}, {"type": "long", "name": "Tags
+    Walking Simulator", "required": true}, {"type": "long", "name": "Tags Puzzle-Platformer",
+    "required": true}, {"type": "long", "name": "Tags Medieval", "required": true},
+    {"type": "long", "name": "Tags Typing", "required": true}, {"type": "long", "name":
+    "Tags FPS", "required": true}, {"type": "long", "name": "Tags Physics", "required":
+    true}, {"type": "long", "name": "Tags Perma Death", "required": true}, {"type":
+    "long", "name": "Tags Lovecraftian", "required": true}, {"type": "long", "name":
+    "Tags Crafting", "required": true}, {"type": "long", "name": "Tags Mystery", "required":
+    true}, {"type": "long", "name": "Tags 3D", "required": true}, {"type": "long",
+    "name": "Tags Blood", "required": true}, {"type": "long", "name": "Tags Character
+    Customization", "required": true}, {"type": "long", "name": "Tags Automation",
+    "required": true}, {"type": "long", "name": "Tags Game Development", "required":
+    true}, {"type": "long", "name": "Tags Open World Survival Craft", "required":
+    true}, {"type": "long", "name": "Tags Inventory Management", "required": true},
+    {"type": "long", "name": "Tags Class-Based", "required": true}, {"type": "long",
+    "name": "Tags 360 Video", "required": true}, {"type": "long", "name": "Tags Volleyball",
+    "required": true}, {"type": "long", "name": "Tags Party-Based RPG", "required":
+    true}, {"type": "long", "name": "Tags Real Time Tactics", "required": true}, {"type":
+    "long", "name": "Tags Ninja", "required": true}, {"type": "long", "name": "Tags
+    VR Only", "required": true}, {"type": "long", "name": "Tags Collectathon", "required":
+    true}, {"type": "long", "name": "Tags Card Game", "required": true}, {"type":
+    "long", "name": "Tags Horror", "required": true}, {"type": "long", "name": "Tags
+    Mars", "required": true}, {"type": "long", "name": "Tags Relaxing", "required":
+    true}, {"type": "long", "name": "Tags Electronic Music", "required": true}, {"type":
+    "long", "name": "Tags Procedural Generation", "required": true}, {"type": "long",
+    "name": "Tags Turn-Based", "required": true}, {"type": "long", "name": "Tags Pixel
+    Graphics", "required": true}, {"type": "long", "name": "Tags Golf", "required":
+    true}, {"type": "long", "name": "Tags 2D Fighter", "required": true}, {"type":
+    "long", "name": "Tags Addictive", "required": true}, {"type": "long", "name":
+    "Tags Time Attack", "required": true}, {"type": "long", "name": "Tags Supernatural",
+    "required": true}, {"type": "long", "name": "Tags Dating Sim", "required": true},
+    {"type": "long", "name": "Tags Dog", "required": true}, {"type": "long", "name":
+    "Tags Asynchronous Multiplayer", "required": true}, {"type": "long", "name": "Tags
+    Fantasy", "required": true}, {"type": "long", "name": "Tags First-Person", "required":
+    true}, {"type": "long", "name": "Tags Cycling", "required": true}, {"type": "long",
+    "name": "Tags Epic", "required": true}, {"type": "long", "name": "Tags Isometric",
+    "required": true}, {"type": "long", "name": "Tags Gun Customization", "required":
+    true}, {"type": "long", "name": "Tags Interactive Fiction", "required": true},
+    {"type": "long", "name": "Tags Great Soundtrack", "required": true}, {"type":
+    "long", "name": "Tags Tutorial", "required": true}, {"type": "long", "name": "Tags
+    Trains", "required": true}, {"type": "long", "name": "Tags Mystery Dungeon", "required":
+    true}, {"type": "long", "name": "Tags Motorbike", "required": true}, {"type":
+    "long", "name": "Tags Beat ''em up", "required": true}, {"type": "long", "name":
+    "Tags Shoot ''Em Up", "required": true}, {"type": "long", "name": "Tags BMX",
+    "required": true}, {"type": "long", "name": "Tags Creature Collector", "required":
+    true}, {"type": "long", "name": "Tags MMORPG", "required": true}, {"type": "long",
+    "name": "Tags Feature Film", "required": true}, {"type": "long", "name": "Tags
+    Political Sim", "required": true}, {"type": "long", "name": "Tags Controller",
+    "required": true}, {"type": "long", "name": "Tags Stealth", "required": true},
+    {"type": "long", "name": "Tags Magic", "required": true}, {"type": "long", "name":
+    "Tags Archery", "required": true}, {"type": "long", "name": "Tags 4 Player Local",
+    "required": true}, {"type": "long", "name": "Tags Old School", "required": true},
+    {"type": "long", "name": "Tags Replay Value", "required": true}, {"type": "long",
+    "name": "Tags Dynamic Narration", "required": true}, {"type": "long", "name":
+    "Tags Dark Humor", "required": true}, {"type": "long", "name": "Tags Sports",
+    "required": true}, {"type": "long", "name": "Tags Comic Book", "required": true},
+    {"type": "long", "name": "Tags Jet", "required": true}, {"type": "long", "name":
+    "Tags Artificial Intelligence", "required": true}, {"type": "long", "name": "Tags
+    Strategy RPG", "required": true}, {"type": "long", "name": "Tags World War I",
+    "required": true}, {"type": "long", "name": "Tags Tactical RPG", "required": true},
+    {"type": "long", "name": "Tags Sci-fi", "required": true}, {"type": "long", "name":
+    "Tags 8-bit Music", "required": true}, {"type": "long", "name": "Tags Farming",
+    "required": true}, {"type": "long", "name": "Tags LGBTQ+", "required": true},
+    {"type": "long", "name": "Tags Football (American)", "required": true}, {"type":
+    "long", "name": "Tags Idler", "required": true}, {"type": "long", "name": "Tags
+    Shooter", "required": true}, {"type": "long", "name": "Tags Wargame", "required":
+    true}, {"type": "long", "name": "Tags Wrestling", "required": true}, {"type":
+    "long", "name": "Tags Underwater", "required": true}, {"type": "long", "name":
+    "Tags 4X", "required": true}, {"type": "long", "name": "Tags Gore", "required":
+    true}, {"type": "long", "name": "Tags Resource Management", "required": true},
+    {"type": "long", "name": "Tags Diplomacy", "required": true}, {"type": "long",
+    "name": "Tags Fast-Paced", "required": true}, {"type": "long", "name": "Tags Modern",
+    "required": true}, {"type": "long", "name": "Tags Music", "required": true}, {"type":
+    "long", "name": "Tags Cold War", "required": true}, {"type": "long", "name": "Tags
+    Score Attack", "required": true}, {"type": "long", "name": "Tags Multiple Endings",
+    "required": true}, {"type": "long", "name": "Tags Mod", "required": true}, {"type":
+    "long", "name": "Tags Co-op", "required": true}, {"type": "long", "name": "Tags
+    Indie", "required": true}, {"type": "long", "name": "Tags Minimalist", "required":
+    true}, {"type": "long", "name": "Tags Third Person", "required": true}, {"type":
+    "long", "name": "Tags Cinematic", "required": true}, {"type": "long", "name":
+    "Tags Masterpiece", "required": true}, {"type": "long", "name": "Tags Crime",
+    "required": true}, {"type": "long", "name": "Tags Grid-Based Movement", "required":
+    true}, {"type": "long", "name": "Tags Romance", "required": true}, {"type": "long",
+    "name": "Tags Skiing", "required": true}, {"type": "long", "name": "Tags Episodic",
+    "required": true}, {"type": "long", "name": "Tags Capitalism", "required": true},
+    {"type": "long", "name": "Tags Anime", "required": true}, {"type": "long", "name":
+    "Tags Looter Shooter", "required": true}, {"type": "long", "name": "Tags Underground",
+    "required": true}, {"type": "long", "name": "Tags Historical", "required": true},
+    {"type": "long", "name": "Tags 3D Fighter", "required": true}, {"type": "long",
+    "name": "Tags Superhero", "required": true}, {"type": "long", "name": "Tags Cats",
+    "required": true}, {"type": "long", "name": "Tags Agriculture", "required": true},
+    {"type": "long", "name": "Tags Auto Battler", "required": true}, {"type": "long",
+    "name": "Tags Voxel", "required": true}, {"type": "long", "name": "Tags 6DOF",
+    "required": true}, {"type": "long", "name": "Tags Games Workshop", "required":
+    true}, {"type": "long", "name": "Tags Skateboarding", "required": true}, {"type":
+    "long", "name": "Tags Split Screen", "required": true}, {"type": "long", "name":
+    "Tags Wholesome", "required": true}, {"type": "long", "name": "Tags Character
+    Action Game", "required": true}, {"type": "long", "name": "Tags Dystopian", "required":
+    true}, {"type": "long", "name": "Tags Psychological Horror", "required": true},
+    {"type": "long", "name": "Tags Farming Sim", "required": true}, {"type": "long",
+    "name": "Tags Steampunk", "required": true}, {"type": "long", "name": "Tags Top-Down
+    Shooter", "required": true}, {"type": "long", "name": "Tags Combat", "required":
+    true}, {"type": "long", "name": "Tags Utilities", "required": true}, {"type":
+    "long", "name": "Tags Massively Multiplayer", "required": true}, {"type": "long",
+    "name": "Tags Logic", "required": true}, {"type": "long", "name": "Tags Female
+    Protagonist", "required": true}, {"type": "long", "name": "Tags Football (Soccer)",
+    "required": true}, {"type": "long", "name": "Tags Robots", "required": true},
+    {"type": "long", "name": "Tags Cute", "required": true}, {"type": "long", "name":
+    "Tags Cartoon", "required": true}, {"type": "long", "name": "Tags Short", "required":
+    true}, {"type": "long", "name": "Tags Hack and Slash", "required": true}, {"type":
+    "long", "name": "Tags Twin Stick Shooter", "required": true}, {"type": "long",
+    "name": "Tags Voice Control", "required": true}, {"type": "long", "name": "Tags
+    Education", "required": true}, {"type": "long", "name": "Tags Action RPG", "required":
+    true}, {"type": "long", "name": "Tags Musou", "required": true}, {"type": "long",
+    "name": "Tags Colorful", "required": true}, {"type": "long", "name": "Tags Spectacle
+    fighter", "required": true}, {"type": "long", "name": "Tags Battle Royale", "required":
+    true}, {"type": "long", "name": "Tags RPGMaker", "required": true}, {"type": "long",
+    "name": "Tags Martial Arts", "required": true}, {"type": "long", "name": "Tags
+    Realistic", "required": true}, {"type": "long", "name": "Tags VR", "required":
+    true}, {"type": "long", "name": "Tags Transhumanism", "required": true}, {"type":
+    "long", "name": "Tags America", "required": true}, {"type": "long", "name": "Tags
+    Time Travel", "required": true}, {"type": "long", "name": "Tags Action Roguelike",
+    "required": true}, {"type": "long", "name": "Tags Experience", "required": true},
+    {"type": "long", "name": "Tags Funny", "required": true}, {"type": "long", "name":
+    "Tags Tactical", "required": true}, {"type": "long", "name": "Tags 2D", "required":
+    true}, {"type": "long", "name": "Tags Comedy", "required": true}, {"type": "long",
+    "name": "Tags Snow", "required": true}, {"type": "long", "name": "Tags Bowling",
+    "required": true}, {"type": "long", "name": "Tags Clicker", "required": true},
+    {"type": "long", "name": "Tags Cozy", "required": true}, {"type": "long", "name":
+    "Tags Tabletop", "required": true}, {"type": "long", "name": "Tags Sexual Content",
+    "required": true}, {"type": "long", "name": "Tags JRPG", "required": true}, {"type":
+    "long", "name": "Tags Kickstarter", "required": true}, {"type": "long", "name":
+    "Tags Economy", "required": true}, {"type": "long", "name": "Tags Noir", "required":
+    true}, {"type": "long", "name": "Tags Hacking", "required": true}, {"type": "long",
+    "name": "Tags Cooking", "required": true}, {"type": "long", "name": "Tags Local
+    Co-Op", "required": true}, {"type": "long", "name": "Tags Dragons", "required":
+    true}, {"type": "long", "name": "Tags Rhythm", "required": true}, {"type": "long",
+    "name": "Tags Immersive Sim", "required": true}, {"type": "long", "name": "Tags
+    Atmospheric", "required": true}, {"type": "long", "name": "Tags Dungeons & Dragons",
+    "required": true}, {"type": "long", "name": "Tags Based On A Novel", "required":
+    true}, {"type": "long", "name": "Tags Exploration", "required": true}, {"type":
+    "long", "name": "Tags Singleplayer", "required": true}, {"type": "long", "name":
+    "Tags Boxing", "required": true}, {"type": "long", "name": "Tags Tanks", "required":
+    true}, {"type": "long", "name": "Tags Sailing", "required": true}, {"type": "long",
+    "name": "Tags War", "required": true}, {"type": "long", "name": "Tags Cyberpunk",
+    "required": true}, {"type": "long", "name": "Tags Fighting", "required": true},
+    {"type": "long", "name": "Tags Well-Written", "required": true}, {"type": "long",
+    "name": "Tags Cartoony", "required": true}, {"type": "long", "name": "Tags Basketball",
+    "required": true}, {"type": "long", "name": "Tags Programming", "required": true},
+    {"type": "long", "name": "Tags Quick-Time Events", "required": true}, {"type":
+    "long", "name": "Tags Conspiracy", "required": true}, {"type": "long", "name":
+    "Tags Reboot", "required": true}, {"type": "long", "name": "Tags Illuminati",
+    "required": true}, {"type": "long", "name": "Tags Classic", "required": true},
+    {"type": "long", "name": "Tags Baseball", "required": true}, {"type": "long",
+    "name": "Tags Casual", "required": true}, {"type": "long", "name": "Tags Transportation",
+    "required": true}, {"type": "long", "name": "Tags Beautiful", "required": true},
+    {"type": "long", "name": "Tags Zombies", "required": true}, {"type": "long", "name":
+    "Tags Assassin", "required": true}, {"type": "long", "name": "Tags Motocross",
+    "required": true}, {"type": "long", "name": "Tags Snowboarding", "required": true},
+    {"type": "long", "name": "Tags Adventure", "required": true}, {"type": "long",
+    "name": "Tags Arena Shooter", "required": true}, {"type": "long", "name": "Tags
+    Stylized", "required": true}, {"type": "long", "name": "Tags Pirates", "required":
+    true}, {"type": "long", "name": "Tags GameMaker", "required": true}, {"type":
+    "long", "name": "Tags Mythology", "required": true}, {"type": "long", "name":
+    "Tags Puzzle", "required": true}, {"type": "long", "name": "Tags Grand Strategy",
+    "required": true}, {"type": "long", "name": "Tags Satire", "required": true},
+    {"type": "long", "name": "Tags MOBA", "required": true}, {"type": "long", "name":
+    "Tags Space", "required": true}, {"type": "long", "name": "Tags Local Multiplayer",
+    "required": true}, {"type": "long", "name": "Tags Family Friendly", "required":
+    true}, {"type": "long", "name": "Tags Remake", "required": true}, {"type": "long",
+    "name": "Tags Philosophical", "required": true}, {"type": "long", "name": "Tags
+    Surreal", "required": true}, {"type": "long", "name": "Tags Hunting", "required":
+    true}, {"type": "long", "name": "Tags Hero Shooter", "required": true}, {"type":
+    "long", "name": "Tags LEGO", "required": true}, {"type": "long", "name": "Tags
+    Social Deduction", "required": true}, {"type": "long", "name": "Tags Card Battler",
+    "required": true}, {"type": "long", "name": "Tags Software Training", "required":
+    true}, {"type": "long", "name": "Tags Traditional Roguelike", "required": true},
+    {"type": "long", "name": "Tags 2.5D", "required": true}, {"type": "long", "name":
+    "Tags Vehicular Combat", "required": true}, {"type": "long", "name": "Tags Dark
+    Fantasy", "required": true}, {"type": "long", "name": "Tags Base-Building", "required":
+    true}, {"type": "long", "name": "Tags Nudity", "required": true}, {"type": "long",
+    "name": "Tags Mini Golf", "required": true}, {"type": "long", "name": "Tags Rome",
+    "required": true}, {"type": "long", "name": "Tags Boss Rush", "required": true},
+    {"type": "long", "name": "Tags Hentai", "required": true}, {"type": "long", "name":
+    "Tags Immersive", "required": true}, {"type": "long", "name": "Tags e-sports",
+    "required": true}, {"type": "long", "name": "Tags Lore-Rich", "required": true},
+    {"type": "long", "name": "Tags Pinball", "required": true}, {"type": "long", "name":
+    "Tags Warhammer 40K", "required": true}, {"type": "long", "name": "Tags Sokoban",
+    "required": true}, {"type": "long", "name": "Tags Precision Platformer", "required":
+    true}, {"type": "long", "name": "Tags Dark", "required": true}, {"type": "long",
+    "name": "Tags Destruction", "required": true}, {"type": "long", "name": "Tags
+    Outbreak Sim", "required": true}, {"type": "long", "name": "Tags Pool", "required":
+    true}, {"type": "long", "name": "Tags Escape Room", "required": true}, {"type":
+    "long", "name": "Tags Dungeon Crawler", "required": true}, {"type": "long", "name":
+    "Tags Cult Classic", "required": true}, {"type": "long", "name": "Tags Bullet
+    Time", "required": true}, {"type": "long", "name": "Tags Villain Protagonist",
+    "required": true}, {"type": "long", "name": "Tags PvP", "required": true}, {"type":
+    "long", "name": "Tags Deckbuilding", "required": true}, {"type": "long", "name":
+    "Tags Competitive", "required": true}, {"type": "long", "name": "Tags Space Sim",
+    "required": true}, {"type": "long", "name": "Tags Spaceships", "required": true},
+    {"type": "long", "name": "Tags Linear", "required": true}, {"type": "long", "name":
+    "Tags Submarine", "required": true}, {"type": "long", "name": "Tags Futuristic",
+    "required": true}, {"type": "long", "name": "Tags Open World", "required": true},
+    {"type": "long", "name": "Tags Driving", "required": true}, {"type": "long", "name":
+    "Tags Electronic", "required": true}, {"type": "long", "name": "Tags Soundtrack",
+    "required": true}, {"type": "long", "name": "Tags Time Management", "required":
+    true}, {"type": "long", "name": "Tags Top-Down", "required": true}, {"type": "long",
+    "name": "Tags Violent", "required": true}, {"type": "long", "name": "Tags Sequel",
+    "required": true}, {"type": "long", "name": "Tags CRPG", "required": true}, {"type":
+    "long", "name": "Tags Post-apocalyptic", "required": true}, {"type": "long", "name":
+    "Tags Real-Time", "required": true}, {"type": "long", "name": "Tags Choices Matter",
+    "required": true}, {"type": "long", "name": "Tags Nature", "required": true},
+    {"type": "long", "name": "Tags World War II", "required": true}, {"type": "long",
+    "name": "Tags Detective", "required": true}, {"type": "long", "name": "Tags Combat
+    Racing", "required": true}, {"type": "long", "name": "Tags Sniper", "required":
+    true}, {"type": "long", "name": "Tags Hardware", "required": true}, {"type": "long",
+    "name": "Tags Lemmings", "required": true}, {"type": "long", "name": "Tags Job
+    Simulator", "required": true}, {"type": "long", "name": "Tags Chess", "required":
+    true}, {"type": "long", "name": "Tags Solitaire", "required": true}, {"type":
+    "long", "name": "Tags Point & Click", "required": true}, {"type": "long", "name":
+    "Tags Visual Novel", "required": true}, {"type": "long", "name": "Tags Nonlinear",
+    "required": true}, {"type": "long", "name": "Tags Retro", "required": true}, {"type":
+    "long", "name": "Tags PvE", "required": true}, {"type": "long", "name": "Tags
+    Heist", "required": true}, {"type": "long", "name": "Tags City Builder", "required":
+    true}, {"type": "long", "name": "Tags Fishing", "required": true}, {"type": "long",
+    "name": "Tags Hockey", "required": true}, {"type": "long", "name": "Tags Simulation",
+    "required": true}, {"type": "long", "name": "Tags Emotional", "required": true},
+    {"type": "long", "name": "Tags FMV", "required": true}, {"type": "long", "name":
+    "Tags Investigation", "required": true}, {"type": "long", "name": "Tags 3D Vision",
+    "required": true}, {"type": "long", "name": "Tags Party", "required": true}, {"type":
+    "long", "name": "Tags Gothic", "required": true}, {"type": "long", "name": "Tags
+    Turn-Based Tactics", "required": true}, {"type": "long", "name": "Tags Benchmark",
+    "required": true}, {"type": "long", "name": "Tags Multiplayer", "required": true},
+    {"type": "long", "name": "Tags Medical Sim", "required": true}, {"type": "long",
+    "name": "Tags Narrative", "required": true}, {"type": "long", "name": "Tags Strategy",
+    "required": true}, {"type": "long", "name": "Tags Military", "required": true},
+    {"type": "long", "name": "Tags Asymmetric VR", "required": true}, {"type": "long",
+    "name": "Tags Automobile Sim", "required": true}, {"type": "long", "name": "Tags
+    Roguevania", "required": true}, {"type": "long", "name": "Tags Bullet Hell", "required":
+    true}, {"type": "long", "name": "Tags Moddable", "required": true}, {"type": "long",
+    "name": "Tags Mature", "required": true}, {"type": "long", "name": "Tags Tennis",
+    "required": true}, {"type": "long", "name": "Tags Werewolves", "required": true},
+    {"type": "long", "name": "Tags Intentionally Awkward Controls", "required": true},
+    {"type": "long", "name": "Tags Turn-Based Combat", "required": true}, {"type":
+    "long", "name": "Tags Music-Based Procedural Generation", "required": true}, {"type":
+    "long", "name": "Tags Platformer", "required": true}, {"type": "long", "name":
+    "Tags Memes", "required": true}, {"type": "long", "name": "Tags Vampire", "required":
+    true}, {"type": "long", "name": "Tags Conversation", "required": true}, {"type":
+    "long", "name": "Tags Trading", "required": true}, {"type": "long", "name": "Tags
+    Action-Adventure", "required": true}, {"type": "long", "name": "Tags Trading Card
+    Game", "required": true}, {"type": "long", "name": "Tags Free to Play", "required":
+    true}, {"type": "long", "name": "Tags RPG", "required": true}, {"type": "long",
+    "name": "Tags Tower Defense", "required": true}, {"type": "long", "name": "Tags
+    Instrumental Music", "required": true}, {"type": "long", "name": "Tags Movie",
+    "required": true}, {"type": "long", "name": "Tags Building", "required": true},
+    {"type": "long", "name": "Tags Swordplay", "required": true}, {"type": "long",
+    "name": "Tags Politics", "required": true}, {"type": "long", "name": "Tags Abstract",
+    "required": true}, {"type": "long", "name": "Tags NSFW", "required": true}, {"type":
+    "long", "name": "Tags Crowdfunded", "required": true}, {"type": "long", "name":
+    "Tags Photo Editing", "required": true}, {"type": "long", "name": "Tags 1990''s",
+    "required": true}, {"type": "long", "name": "Tags Parody", "required": true},
+    {"type": "long", "name": "Tags Arcade", "required": true}, {"type": "long", "name":
+    "Tags Early Access", "required": true}, {"type": "long", "name": "Tags Design
+    & Illustration", "required": true}, {"type": "long", "name": "Tags God Game",
+    "required": true}, {"type": "long", "name": "Tags 2D Platformer", "required":
+    true}, {"type": "long", "name": "Tags Touch-Friendly", "required": true}, {"type":
+    "long", "name": "Tags Thriller", "required": true}, {"type": "long", "name": "Tags
+    Runner", "required": true}, {"type": "long", "name": "Tags Mouse only", "required":
+    true}, {"type": "long", "name": "Tags Minigames", "required": true}, {"type":
+    "long", "name": "Tags ATV", "required": true}, {"type": "long", "name": "Tags
+    Word Game", "required": true}, {"type": "long", "name": "Tags Board Game", "required":
+    true}, {"type": "long", "name": "Tags Mining", "required": true}, {"type": "long",
+    "name": "Tags Choose Your Own Adventure", "required": true}, {"type": "long",
+    "name": "Tags Gaming", "required": true}, {"type": "long", "name": "Tags Alternate
+    History", "required": true}, {"type": "long", "name": "Tags Hand-drawn", "required":
+    true}, {"type": "long", "name": "Tags Match 3", "required": true}, {"type": "long",
+    "name": "Tags Documentary", "required": true}, {"type": "long", "name": "Tags
+    Party Game", "required": true}, {"type": "long", "name": "Tags Survival Horror",
+    "required": true}, {"type": "long", "name": "Tags Naval Combat", "required": true},
+    {"type": "long", "name": "Tags Management", "required": true}, {"type": "long",
+    "name": "Tags Sandbox", "required": true}, {"type": "long", "name": "Tags Action",
+    "required": true}, {"type": "long", "name": "Tags Level Editor", "required": true},
+    {"type": "long", "name": "Tags TrackIR", "required": true}, {"type": "long", "name":
+    "Tags Soccer", "required": true}, {"type": "long", "name": "Tags RTS", "required":
+    true}, {"type": "long", "name": "Tags Trivia", "required": true}, {"type": "long",
+    "name": "Tags Political", "required": true}, {"type": "long", "name": "Tags Hex
+    Grid", "required": true}, {"type": "long", "name": "Tags Nostalgia", "required":
+    true}, {"type": "long", "name": "Tags Real-Time with Pause", "required": true},
+    {"type": "long", "name": "Tags Gambling", "required": true}, {"type": "long",
+    "name": "Tags Online Co-Op", "required": true}, {"type": "long", "name": "num_movies",
+    "required": true}, {"type": "long", "name": "Supported languages Danish", "required":
+    true}, {"type": "long", "name": "Supported languages Zulu", "required": true},
+    {"type": "long", "name": "Supported languages Arabic", "required": true}, {"type":
+    "long", "name": "Supported languages Czech", "required": true}, {"type": "long",
+    "name": "Supported languages Greek", "required": true}, {"type": "long", "name":
+    "Supported languages Catalan", "required": true}, {"type": "long", "name": "Supported
+    languages Traditional Chinese", "required": true}, {"type": "long", "name": "Supported
+    languages Finnish", "required": true}, {"type": "long", "name": "Supported languages
+    Japanese", "required": true}, {"type": "long", "name": "Supported languages Vietnamese",
+    "required": true}, {"type": "long", "name": "Supported languages Spanish - Spain",
+    "required": true}, {"type": "long", "name": "Supported languages Russian", "required":
+    true}, {"type": "long", "name": "Supported languages Dutch", "required": true},
+    {"type": "long", "name": "Supported languages Hebrew", "required": true}, {"type":
+    "long", "name": "Supported languages Slovak", "required": true}, {"type": "long",
+    "name": "Supported languages English&amp;lt;strong&amp;gt;&amp;lt;/strong&amp;gt;",
+    "required": true}, {"type": "long", "name": "Supported languages Portuguese",
+    "required": true}, {"type": "long", "name": "Supported languages Hindi", "required":
+    true}, {"type": "long", "name": "Supported languages Norwegian", "required": true},
+    {"type": "long", "name": "Supported languages English", "required": true}, {"type":
+    "long", "name": "Supported languages Italian", "required": true}, {"type": "long",
+    "name": "Supported languages Indonesian", "required": true}, {"type": "long",
+    "name": "Supported languages German&amp;lt;strong&amp;gt;&amp;lt;/strong&amp;gt;",
+    "required": true}, {"type": "long", "name": "Supported languages German", "required":
+    true}, {"type": "long", "name": "Supported languages Simplified Chinese", "required":
+    true}, {"type": "long", "name": "Supported languages Afrikaans", "required": true},
+    {"type": "long", "name": "Supported languages Korean", "required": true}, {"type":
+    "long", "name": "Supported languages Romanian", "required": true}, {"type": "long",
+    "name": "Supported languages Korean&amp;lt;strong&amp;gt;&amp;lt;/strong&amp;gt;",
+    "required": true}, {"type": "long", "name": "Supported languages Swedish", "required":
+    true}, {"type": "long", "name": "Supported languages Portuguese - Portugal", "required":
+    true}, {"type": "long", "name": "Supported languages Polish", "required": true},
+    {"type": "long", "name": "Supported languages Italian&amp;lt;strong&amp;gt;&amp;lt;/strong&amp;gt;",
+    "required": true}, {"type": "long", "name": "Supported languages Portuguese -
+    Brazil", "required": true}, {"type": "long", "name": "Supported languages Ukrainian",
+    "required": true}, {"type": "long", "name": "Supported languages French", "required":
+    true}, {"type": "long", "name": "Supported languages Turkish", "required": true},
+    {"type": "long", "name": "Supported languages Thai", "required": true}, {"type":
+    "long", "name": "Supported languages Bulgarian", "required": true}, {"type": "long",
+    "name": "Supported languages Basque", "required": true}, {"type": "long", "name":
+    "Supported languages Japanese &amp;lt;br /&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;strong&amp;gt;&amp;lt;/strong&amp;gt;
+    ", "required": true}, {"type": "long", "name": "Supported languages Hungarian",
+    "required": true}, {"type": "long", "name": "Supported languages Spanish - Latin
+    America", "required": true}, {"type": "long", "name": "Supported languages French&amp;lt;strong&amp;gt;&amp;lt;/strong&amp;gt;",
+    "required": true}, {"type": "long", "name": "Supported languages Spanish - Spain&amp;lt;strong&amp;gt;&amp;lt;/strong&amp;gt;",
+    "required": true}, {"type": "long", "name": "Full audio languages Danish", "required":
+    true}, {"type": "long", "name": "Full audio languages Zulu", "required": true},
+    {"type": "long", "name": "Full audio languages Arabic", "required": true}, {"type":
+    "long", "name": "Full audio languages Czech", "required": true}, {"type": "long",
+    "name": "Full audio languages Greek", "required": true}, {"type": "long", "name":
+    "Full audio languages Traditional Chinese", "required": true}, {"type": "long",
+    "name": "Full audio languages Finnish", "required": true}, {"type": "long", "name":
+    "Full audio languages Japanese", "required": true}, {"type": "long", "name": "Full
+    audio languages Vietnamese", "required": true}, {"type": "long", "name": "Full
+    audio languages Spanish - Spain", "required": true}, {"type": "long", "name":
+    "Full audio languages Russian", "required": true}, {"type": "long", "name": "Full
+    audio languages Dutch", "required": true}, {"type": "long", "name": "Full audio
+    languages English&amp;lt;strong&amp;gt;&amp;lt;/strong&amp;gt;", "required": true},
+    {"type": "long", "name": "Full audio languages Portuguese", "required": true},
+    {"type": "long", "name": "Full audio languages Norwegian", "required": true},
+    {"type": "long", "name": "Full audio languages English", "required": true}, {"type":
+    "long", "name": "Full audio languages Italian", "required": true}, {"type": "long",
+    "name": "Full audio languages Indonesian", "required": true}, {"type": "long",
+    "name": "Full audio languages German&amp;lt;strong&amp;gt;&amp;lt;/strong&amp;gt;",
+    "required": true}, {"type": "long", "name": "Full audio languages German", "required":
+    true}, {"type": "long", "name": "Full audio languages Simplified Chinese", "required":
+    true}, {"type": "long", "name": "Full audio languages Korean", "required": true},
+    {"type": "long", "name": "Full audio languages Romanian", "required": true}, {"type":
+    "long", "name": "Full audio languages Korean&amp;lt;strong&amp;gt;&amp;lt;/strong&amp;gt;",
+    "required": true}, {"type": "long", "name": "Full audio languages Swedish", "required":
+    true}, {"type": "long", "name": "Full audio languages Portuguese - Portugal",
+    "required": true}, {"type": "long", "name": "Full audio languages Polish", "required":
+    true}, {"type": "long", "name": "Full audio languages Italian&amp;lt;strong&amp;gt;&amp;lt;/strong&amp;gt;",
+    "required": true}, {"type": "long", "name": "Full audio languages Portuguese -
+    Brazil", "required": true}, {"type": "long", "name": "Full audio languages Ukrainian",
+    "required": true}, {"type": "long", "name": "Full audio languages French", "required":
+    true}, {"type": "long", "name": "Full audio languages Turkish", "required": true},
+    {"type": "long", "name": "Full audio languages Bulgarian", "required": true},
+    {"type": "long", "name": "Full audio languages Thai", "required": true}, {"type":
+    "long", "name": "Full audio languages Japanese &amp;lt;br /&amp;gt;&amp;lt;br
+    /&amp;gt;&amp;lt;strong&amp;gt;&amp;lt;/strong&amp;gt; ", "required": true}, {"type":
+    "long", "name": "Full audio languages Hungarian", "required": true}, {"type":
+    "long", "name": "Full audio languages Spanish - Latin America", "required": true},
+    {"type": "long", "name": "Full audio languages French&amp;lt;strong&amp;gt;&amp;lt;/strong&amp;gt;",
+    "required": true}, {"type": "long", "name": "Full audio languages Spanish - Spain&amp;lt;strong&amp;gt;&amp;lt;/strong&amp;gt;",
+    "required": true}, {"type": "long", "name": "release_year", "required": true},
+    {"type": "long", "name": "release_month", "required": true}, {"type": "long",
+    "name": "release_day", "required": true}, {"type": "long", "name": "estimated_owner_min",
+    "required": true}, {"type": "long", "name": "estimated_owner_max", "required":
+    true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "float64", "shape": [-1]}}]'
+  params: null
+utc_time_created: '2024-07-23 06:18:14.352070'

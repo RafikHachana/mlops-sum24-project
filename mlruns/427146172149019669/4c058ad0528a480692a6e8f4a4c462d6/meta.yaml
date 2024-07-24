@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/427146172149019669/4c058ad0528a480692a6e8f4a4c462d6/artifacts
+end_time: 1721811940526
+entry_point_name: ''
+experiment_id: '427146172149019669'
+lifecycle_stage: active
+run_id: 4c058ad0528a480692a6e8f4a4c462d6
+run_name: child_multi_run_random_forest_neg_mean_squared_error_-1_7649678208095842e+44_0
+run_uuid: 4c058ad0528a480692a6e8f4a4c462d6
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721811936981
+status: 3
+tags: []
+user_id: rafik

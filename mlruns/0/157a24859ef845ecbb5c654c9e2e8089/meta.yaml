@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/157a24859ef845ecbb5c654c9e2e8089/artifacts
+end_time: 1721815293860
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 157a24859ef845ecbb5c654c9e2e8089
+run_name: brawny-dog-298
+run_uuid: 157a24859ef845ecbb5c654c9e2e8089
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721815287293
+status: 4
+tags: []
+user_id: rafik

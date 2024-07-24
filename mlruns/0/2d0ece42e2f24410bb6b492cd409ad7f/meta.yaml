@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/2d0ece42e2f24410bb6b492cd409ad7f/artifacts
+end_time: 1721813519892
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 2d0ece42e2f24410bb6b492cd409ad7f
+run_name: resilient-wasp-161
+run_uuid: 2d0ece42e2f24410bb6b492cd409ad7f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721813513315
+status: 4
+tags: []
+user_id: rafik

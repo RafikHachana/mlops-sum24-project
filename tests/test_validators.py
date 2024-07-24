@@ -1,8 +1,11 @@
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pytest
 import pandas as pd
 from great_expectations.dataset import PandasDataset
-from data import (
+from src.data import (
     validate_app_id,
     validate_release_date,
     validate_user_score,
@@ -46,8 +49,10 @@ def fail_validator():
         "Release date": ["October 21, 2008", "11/05/2010", "2021-12-31"],  # Incorrect date format
         "User score": [85, 150, 70],  # Score out of range
         "Metacritic score": [88, -5, 105],  # Score out of range
+
         "Support url": [2, 2.3, 5],  # Incorrect URL format
         "Metacritic url": [5, 10, -5],  # Incorrect URL format
+
         "Peak CCU": [500, -2000, 1500000000],  # Out of range
         "Required age": [-1, 101, 18],  # Out of range
         "Price": [-10, 1500, 59.99],  # Out of range

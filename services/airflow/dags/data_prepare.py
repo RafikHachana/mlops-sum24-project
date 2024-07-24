@@ -1,17 +1,19 @@
+import os
+
+BASE_PATH = os.path.expandvars("$PROJECTPATH")
+BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+import sys
+sys.path.append(BASE_PATH)
 
 from airflow.models import Variable
 
 import pandas as pd
 from typing_extensions import Tuple, Annotated
 from zenml import step, pipeline, ArtifactConfig
-import sys
-import os
-
-from data import transform_data, extract_data, load_features, validate_features
-
-# BASE_PATH = os.path.expandvars("$PROJECTPATH")
-BASE_PATH = 'data/games.csv'
-PROJECT_ROOT = Variable.get("PROJECT_ROOT")
+from src.data import transform_data, extract_data, load_features, validate_transformed_data
+# from utils import get_sample_version
 
 @step(enable_cache=False)
 def extract()-> Tuple[
@@ -25,7 +27,7 @@ def extract()-> Tuple[
                                        tags=["data_preparation"])]
                     ]:
     
-    df, version = extract_data(PROJECT_ROOT)
+    df, version = extract_data(os.path.join(BASE_PATH))
 
     return df, version
 
@@ -41,6 +43,7 @@ def transform(df: pd.DataFrame)-> Tuple[
 
     # Your data transformation code
     X, y = transform_data(df)
+    print("bbbbbbbb", X.shape, y.shape)
 
     return X, y
 
@@ -55,7 +58,7 @@ def validate(X:pd.DataFrame,
                                            tags=["data_preparation"])]
                                     ]:
 
-    X, y = validate_features(X, y)
+    X, y = validate_transformed_data(X, y)
     
     return X, y
 

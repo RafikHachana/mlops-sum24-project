@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/55abc12ee8ca417e9cb7e46a9d68f06d/artifacts
+end_time: 1721715313767
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 55abc12ee8ca417e9cb7e46a9d68f06d
+run_name: flawless-robin-694
+run_uuid: 55abc12ee8ca417e9cb7e46a9d68f06d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721715303036
+status: 4
+tags: []
+user_id: rafik

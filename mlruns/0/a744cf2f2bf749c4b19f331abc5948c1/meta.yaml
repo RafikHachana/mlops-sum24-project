@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/a744cf2f2bf749c4b19f331abc5948c1/artifacts
+end_time: 1721716010554
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: a744cf2f2bf749c4b19f331abc5948c1
+run_name: honorable-stag-755
+run_uuid: a744cf2f2bf749c4b19f331abc5948c1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721716003556
+status: 4
+tags: []
+user_id: rafik

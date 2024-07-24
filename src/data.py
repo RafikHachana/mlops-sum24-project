@@ -19,10 +19,71 @@ import requests
 from zipfile import ZipFile
 from io import BytesIO
 from tqdm import tqdm
+from zenml.client import Client
+from sklearn.model_selection import train_test_split
+import zenml
+
+
+def load_features_training(name, version, size = 1):
+    client = Client()
+    l = client.list_artifact_versions(name = name, tag = version, sort_by="version").items
+    l.sort(key=lambda x: int(x.version), reverse=True)
+
+
+
+    df = l[0].load()
+    if size < 1:
+        df = df.sample(frac = size, random_state = 88)
+
+    print("size of df is ", df.shape)
+    print("df columns: ", df.columns)
+
+    X = df[df.columns[:-1]]
+    y = df[df.columns[-1]]
+
+    print("shapes of X,y = ", X.shape, y.shape)
+
+    return X, y
+
+
+# def extract_data_training(cfg):
+#     # Fetch the ZenML artifact store client
+#     client = Client()
+
+
+#     data = client.list_artifact_versions(name ="features_target", sort_by="version").items
+#     data.reverse()
+#     data = data[0].load()
+
+#     print("NaN", data.isna().sum().sum())
+#     # y = df['Average playtime two weeks']
+#     # X = df.drop(columns=['Average playtime two weeks'])
+#     # y.reverse()
+#     # y = y[0].load()
+
+#     # Load the data sample based on the version
+#     # data_version = cfg.data_version
+#     # artifact = artifact_store.get_artifact(name=f"data_sample_{data_version}")
+#     # data = pd.read_csv(artifact.uri)
+
+#     # Split data into training and validation sets
+#     train_data, val_data = train_test_split(data, test_size=0.1, random_state=42)
+
+#     # Load the test data sample based on the version
+#     # test_data_version = cfg.test_data_version
+#     # test_artifact = artifact_store.get_artifact(name=f"data_sample_{test_data_version}")
+#     # test_data = pd.read_csv(test_artifact.uri)
+
+#     # TODO: What is this?
+#     # Split the test data
+#     _, test_data = train_test_split(train_data, test_size=0.1, random_state=42)
+
+#     return train_data, val_data, test_data
+
 
 URL_REGEX = r"^(?:https?:\/\/)?(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$"
 
-def transform_data(df):
+def transform_data(df, only_x=False):
     # Your data transformation code
 
     gc.collect()
@@ -34,6 +95,8 @@ def transform_data(df):
     # probably drop Screenshots.
     # drop AppID
     # drop Name
+
+    # print("Columns", df.columns)
 
     df.drop(columns=['Header image', 'Score rank', 'Developers', 'Publishers', 'Screenshots', 'AppID', 'Name'], inplace=True)
 
@@ -68,6 +131,7 @@ def transform_data(df):
 
         unique_categories = set(all_categories)
         # print(feat_name, len(unique_categories))
+        print(f"Unique categories for {feat_name}: {len(unique_categories)}")
         if len(unique_categories) > 500:
             raise ValueError("Too many unique values")
         
@@ -91,12 +155,16 @@ def transform_data(df):
 
     df.dropna(subset=['Categories', 'Genres', 'Tags', 'Movies'], inplace=True)
     # transform Categories (unique vals = 40) using one hot encoding and fill missing values (3407).
-    df = clean_cat_feats(df, 'Categories')
+    # df = clean_cat_feats(df, 'Categories')
+    df.drop(columns=['Categories'], inplace=True)
+    df.drop(columns=['Genres'], inplace=True)
+
     # raise ValueError("Too many unique values")
     # transform Genres (unique vals = 30) using one hot encoding and fill missing values (2439).
-    df = clean_cat_feats(df, 'Genres')
+    # df = clean_cat_feats(df, 'Genres')
     # transform Tags (unique vals = 446) using one hot encoding and fill missing values (14014). Or maybe not. Just ignore it.
-    df = clean_cat_feats(df, 'Tags')
+    # df = clean_cat_feats(df, 'Tags')
+    df.drop(columns=['Tags'], inplace=True)
     # tranform Movies to num_movies (not sure though. These are NOT actual movies. They are trailers. So, maybe we can ignore this feature.)
     df['num_movies'] = df['Movies'].apply(lambda x: len(x.split(',')))
     df.drop(columns=['Movies'], inplace=True)
@@ -146,9 +214,12 @@ def transform_data(df):
         return df
 
     # Supported languages (unique = 134) one hot encoding
-    df = clean_cat_feats_langs(df, 'Supported languages')
+    df.drop(columns=['Supported languages'], inplace=True)
+    df.drop(columns=['Full audio languages'], inplace=True)
+
+    # df = clean_cat_feats_langs(df, 'Supported languages')
     # Full audio languages (unique = 121) one hot encoding
-    df = clean_cat_feats_langs(df, 'Full audio languages')
+    # df = clean_cat_feats_langs(df, 'Full audio languages')
 
 
     # KEEP
@@ -198,7 +269,8 @@ def transform_data(df):
     # Negative
     # Recommendations
     gc.collect()
-
+    if only_x:
+        return df
     target_col = 'Average playtime two weeks'
     X = df.drop(columns=[target_col])
     y = df[[target_col]]
@@ -209,10 +281,12 @@ def extract_data(project_root):
     version_file = f'{project_root}/configs/data_version.yaml'
     with open(version_file, 'r') as f:
         version_data = yaml.safe_load(f)
-    return df, str(version_data['version'])
+    return df, str(version_data['data_version'])
 
 def load_features(X, y, version):
     print(f"Loading features and target with version {version}")
+    zenml.save_artifact(data = pd.concat([X,y], axis=1), name = "features_target", tags=[version])
+    return X, y
 
 def validate_transformed_data(X, y):
     assert X.shape[0] == y.shape[0], "X and y should have the same number of rows"
@@ -224,7 +298,7 @@ def validate_transformed_data(X, y):
     for col, typ in zip(cols, types):
         assert typ == int or typ == float, f"Column {col} should be numeric"
         # assert str(typ).startswith('int') or str(typ).startswith('float')
-    assert y.dtype == 'int', "y should be numeric"
+    assert y[y.columns[0]].dtype == 'int', "y should be numeric"
     return X, y
 
 def validate_app_id(validator: Validator):
