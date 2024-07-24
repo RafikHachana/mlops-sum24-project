@@ -30,7 +30,7 @@ def load_features_training(name, version, size = 1):
     print(l)
     l.reverse
 
-    df = client.get_artifact_version('22ff69f5-73e5-4f30-94d5-b71127370f6d').load()
+    df = client.get_artifact_version('5708ee49-75fd-4b77-939f-f6731a5036cd').load()
     df = df.sample(frac = size, random_state = 88)
 
     print("size of df is ", df.shape)

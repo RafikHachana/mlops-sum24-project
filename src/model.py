@@ -4,223 +4,288 @@ import mlflow
 import warnings
 warnings.filterwarnings('ignore')
 from sklearn.model_selection import GridSearchCV
-from zenml.client import Client
 import pandas as pd
-import mlflow
-import mlflow.sklearn
 import importlib
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import numpy as np
+from skorch import NeuralNetRegressor
+from torch.utils.data import DataLoader, TensorDataset
+from sklearn.model_selection import StratifiedKFold
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, make_scorer
+from mlflow.models.evaluation import evaluate
 
-def train(train_data, val_data):
-    # Extract features and labels
-    X_train = train_data.drop(columns=['Average playtime two weeks'])
-    y_train = train_data['Average playtime two weeks']
-    X_val = val_data.drop(columns=['Average playtime two weeks'])
-    y_val = val_data['Average playtime two weeks']
+# Define Model1 and Model2 as per your code
+class Model1(nn.Module):
+    def __init__(self, input_dim, dropout_rate=0.2):
+        super(Model1, self).__init__()
+        self.fc1 = nn.Linear(input_dim, 64)
+        self.bn1 = nn.BatchNorm1d(64)
+        self.dropout1 = nn.Dropout(dropout_rate)
+        self.fc2 = nn.Linear(64, 64)
+        self.bn2 = nn.BatchNorm1d(64)
+        self.dropout2 = nn.Dropout(dropout_rate)
+        self.output = nn.Linear(64, 1)
+    
+    def forward(self, x):
+        x = torch.relu(self.bn1(self.fc1(x)))
+        x = self.dropout1(x)
+        x = torch.relu(self.bn2(self.fc2(x)))
+        x = self.dropout2(x)
+        x = self.output(x)
+        return x
 
-    # Initialize and train the model
-    model = LogisticRegression()
-    model.fit(X_train, y_train)
-
-    # Validate the model
-    val_predictions = model.predict(X_val)
-    val_mse = mean_squared_error(y_val, val_predictions)
-    print(f"Validation MSE: {val_mse}")
-
-    return model
+class Model2(nn.Module):
+    def __init__(self, input_dim, dropout_rate=0.2):
+        super(Model2, self).__init__()
+        self.fc1 = nn.Linear(input_dim, 128)
+        self.bn1 = nn.BatchNorm1d(128)
+        self.dropout1 = nn.Dropout(dropout_rate)
+        self.fc2 = nn.Linear(128, 128)
+        self.bn2 = nn.BatchNorm1d(128)
+        self.dropout2 = nn.Dropout(dropout_rate)
+        self.fc3 = nn.Linear(128, 128)
+        self.bn3 = nn.BatchNorm1d(128)
+        self.dropout3 = nn.Dropout(dropout_rate)
+        self.output = nn.Linear(128, 1)
+    
+    def forward(self, x):
+        x = torch.relu(self.bn1(self.fc1(x)))
+        x = self.dropout1(x)
+        x = torch.relu(self.bn2(self.fc2(x)))
+        x = self.dropout2(x)
+        x = torch.relu(self.bn3(self.fc3(x)))
+        x = self.dropout3(x)
+        x = self.output(x)
+        return x
 
 def evaluate(model, test_data):
-    # Extract features and labels
     X_test = test_data.drop(columns=['Average playtime two weeks'])
     y_test = test_data['Average playtime two weeks']
 
     # Evaluate the model
     test_predictions = model.predict(X_test)
     test_mse = mean_squared_error(y_test, test_predictions)
-    print(f"Test Accuracy: {test_mse}")
 
-    return {"accuracy": test_mse}
-
-def log_metadata(model, metrics, cfg):
-    # Log model and metrics using MLflow
-    with mlflow.start_run():
-        mlflow.log_params(cfg)
-        mlflow.sklearn.log_model(model, "model")
-        mlflow.log_metrics(metrics)
+    print(f"Test MSE: {test_mse}")
+    mlflow.log_metric("test_mse", test_mse)
+    
+    # Use mlflow.evaluate to log metrics and artifacts
+    eval_result = mlflow.evaluate(
+        model=model,
+        data=X_test.to_numpy().astype(np.float32),
+        targets=y_test.to_numpy().astype(np.float32),
+        model_type="regressor",
+        evaluators=["default"],
+    )
+    mlflow.log_metrics(eval_result["metrics"])
 
 def log_metadata(cfg, gs, X_train, y_train, X_test, y_test):
+    import mlflow
+    import pandas as pd
+    import importlib
+    from mlflow.models import infer_signature
+
+    mlflow.set_tracking_uri("http://localhost:5000")
 
     cv_results = pd.DataFrame(gs.cv_results_).filter(regex=r'std_|mean_|param_').sort_index(axis=1)
-    best_metrics_values = [result[1][gs.best_index_] for result in gs.cv_results_.items()]
-    best_metrics_keys = [metric for metric in gs.cv_results_]
-    best_metrics_dict = {k:v for k,v in zip(best_metrics_keys, best_metrics_values) if 'mean' in k or 'std' in k}
+    best_index = gs.best_index_
+    best_metrics_dict = {
+        key: value[best_index] for key, value in gs.cv_results_.items()
+        if 'mean' in key or 'std' in key
+    }
 
-    # print(cv_results, cv_results.columns)
+    df_train = pd.concat([pd.DataFrame(X_train), pd.Series(y_train, name='Average playtime two weeks')], axis=1)
+    df_test = pd.concat([pd.DataFrame(X_test), pd.Series(y_test, name='Average playtime two weeks')], axis=1)
 
-    params = best_metrics_dict
-
-    df_train = pd.concat([X_train, y_train], axis = 1)
-    df_test = pd.concat([X_test, y_test], axis = 1)
-
-    experiment_name = cfg.model.model_name + "_" + cfg.experiment_name 
-
+    experiment_name = cfg['model']['model_name'] + "_" + cfg['experiment_name']
     try:
-        # Create a new MLflow Experiment
         experiment_id = mlflow.create_experiment(name=experiment_name)
-    except mlflow.exceptions.MlflowException as e:
-        experiment_id = mlflow.get_experiment_by_name(name=experiment_name).experiment_id # type: ignore
-    
-    print("experiment-id : ", experiment_id)
+    except mlflow.exceptions.MlflowException:
+        experiment_id = mlflow.get_experiment_by_name(name=experiment_name).experiment_id
 
-    cv_evaluation_metric = cfg.model.cv_evaluation_metric
-    run_name = "_".join([cfg.run_name, cfg.model.model_name, cfg.model.evaluation_metric, str(params[cv_evaluation_metric]).replace(".", "_")]) # type: ignore
-    print("run name: ", run_name)
+    evaluation_metric_key = 'mean_test_score'
 
-    if (mlflow.active_run()):
+    run_name = "_".join([
+        cfg['run_name'],
+        cfg['model']['model_name'],
+        cfg['model']['evaluation_metric'],
+        str(best_metrics_dict[evaluation_metric_key]).replace(".", "_")
+    ])
+
+    if mlflow.active_run():
         mlflow.end_run()
 
-    # Fake run
-    with mlflow.start_run():
-        pass
-
-    # Parent run
-    with mlflow.start_run(run_name = run_name, experiment_id = experiment_id) as run:
-
-        df_train_dataset = mlflow.data.pandas_dataset.from_pandas(df = df_train, targets = cfg.data.target_cols[0]) # type: ignore
-        df_test_dataset = mlflow.data.pandas_dataset.from_pandas(df = df_test, targets = cfg.data.target_cols[0]) # type: ignore
-        mlflow.log_input(df_train_dataset, "training")
-        mlflow.log_input(df_test_dataset, "testing")
-
-        # Log the hyperparameters
+    # Start the parent run
+    with mlflow.start_run(run_name=run_name, experiment_id=experiment_id) as parent_run:
         mlflow.log_params(gs.best_params_)
-
-        # Log the performance metrics
         mlflow.log_metrics(best_metrics_dict)
+        mlflow.set_tag(cfg['model']['tag_key'], cfg['model']['tag_value'])
 
-        # Set a tag that we can use to remind ourselves what this run was for
-        mlflow.set_tag(cfg.model.tag_key, cfg.model.tag_value)
+        X_train_sample = X_train.to_numpy()[:5].astype(np.float32)
+        y_train_sample = gs.predict(X_train_sample)
+        signature = infer_signature(X_train_sample, y_train_sample)
 
-        # Infer the model signature
-        signature = mlflow.models.infer_signature(X_train, gs.predict(X_train))
-
-        # Log the model
         model_info = mlflow.sklearn.log_model(
-            sk_model = gs.best_estimator_,
-            artifact_path = cfg.model.artifact_path,
-            signature = signature,
-            input_example = X_train.iloc[0].to_numpy(),
-            registered_model_name = cfg.model.model_name,
-            pyfunc_predict_fn = cfg.model.pyfunc_predict_fn
+            sk_model=gs.best_estimator_,
+            artifact_path=cfg['model']['artifact_path'],
+            signature=signature,
+            input_example=X_train_sample[0],
+            registered_model_name=cfg['model']['model_name'],
+            pyfunc_predict_fn=cfg['model']['pyfunc_predict_fn']
         )
 
         client = mlflow.client.MlflowClient()
-        client.set_model_version_tag(name = cfg.model.model_name, version=model_info.registered_model_version, key="source", value="best_Grid_search_model")
+        client.set_model_version_tag(
+            name=cfg['model']['model_name'],
+            version=model_info.registered_model_version,
+            key="source",
+            value="best_Grid_search_model"
+        )
 
+        X_test_np = X_test.to_numpy().astype(np.float32) if not isinstance(X_test, np.ndarray) else X_test.astype(np.float32)
+        predictions = gs.best_estimator_.predict(X_test_np).reshape(-1)
+        y_test_np = y_test.to_numpy().astype(np.float32) if not isinstance(y_test, np.ndarray) else y_test.astype(np.float32)
+        y_test_np = y_test_np.reshape(-1)
+        test_mse = mean_squared_error(y_test_np, predictions)
+        mlflow.log_metric('test_mse', test_mse)
+
+        eval_data = pd.DataFrame({'label': y_test_np, 'predictions': predictions})
+        eval_data.to_csv('predictions.csv', index=False)
+        mlflow.log_artifact('predictions.csv')
 
         for index, result in cv_results.iterrows():
-
-            child_run_name = "_".join(['child', run_name, str(index)]) # type: ignore
-            with mlflow.start_run(run_name = child_run_name, experiment_id= experiment_id, nested=True): #, tags=best_metrics_dict):
+            child_run_name = "_".join(['child', run_name, str(index)])
+            with mlflow.start_run(run_name=child_run_name, experiment_id=experiment_id, nested=True) as child_run:
                 ps = result.filter(regex='param_').to_dict()
                 ms = result.filter(regex='mean_').to_dict()
                 stds = result.filter(regex='std_').to_dict()
 
-                # Remove param_ from the beginning of the keys
-                ps = {k.replace("param_",""):v for (k,v) in ps.items()}
+                ps = {k.replace("param_", ""): v for (k, v) in ps.items()}
 
                 mlflow.log_params(ps)
                 mlflow.log_metrics(ms)
                 mlflow.log_metrics(stds)
 
-                # We will create the estimator at runtime
-                module_name = cfg.model.module_name # e.g. "sklearn.linear_model"
-                class_name  = cfg.model.class_name # e.g. "LogisticRegression"
+                module_name = cfg['model']['module_name']
 
-                # Load "module.submodule.MyClass"
+                class_name_mapping = {
+                    'model_1': 'Model1',
+                    'model_2': 'Model2',
+                }
+
+                model_name = cfg['model']['model_name']
+                class_name = class_name_mapping.get(model_name)
+                if not class_name:
+                    raise ValueError(f"Unknown model name: {model_name}")
+
                 class_instance = getattr(importlib.import_module(module_name), class_name)
-                
-                estimator = class_instance(**ps)
-                estimator.fit(X_train, y_train)
+                model_params = {k: v for k, v in ps.items() if k in class_instance.__init__.__code__.co_varnames}
+                input_dim = X_train.shape[1]
+                model_params['module__input_dim'] = input_dim
+                batch_size = int(ps.get('batch_size', 32))
+                max_epochs = int(ps.get('max_epochs', 32))
 
-                # from sklearn.model_selection import cross_val_score
-                # scores = cross_val_score(estimator=estimator, 
-                #                          X_train, 
-                #                          y_train, 
-                #                          cv = cfg.model.folds, 
-                #                          n_jobs=cfg.cv_n_jobs,
-                #                          scoring=cfg.model.cv_evaluation_metric)
-                # cv_evaluation_metric = scores.mean()
-                
-                signature = mlflow.models.infer_signature(X_train, estimator.predict(X_train))
+                estimator = NeuralNetRegressor(
+                    module=class_instance,
+                    **model_params,
+                    optimizer=optim.Adam,
+                    criterion=nn.MSELoss,
+                    max_epochs=max_epochs,
+                    batch_size=batch_size,
+                    iterator_train__shuffle=True,
+                    device='cuda' if torch.cuda.is_available() else 'cpu'
+                )
+
+                X_train_np = X_train.to_numpy().astype(np.float32) if not isinstance(X_train, np.ndarray) else X_train.astype(np.float32)
+                y_train_np = y_train.to_numpy().astype(np.float32) if not isinstance(y_train, np.ndarray) else y_train.astype(np.float32)
+
+                # Ensure that input data is correctly converted to tensors
+                X_train_tensor = torch.tensor(X_train_np, dtype=torch.float32)
+                y_train_tensor = torch.tensor(y_train_np, dtype=torch.float32)
+
+                estimator.fit(X_train_tensor, y_train_tensor)
+
+                signature = infer_signature(X_train_np, estimator.predict(X_train_np))
 
                 model_info = mlflow.sklearn.log_model(
-                    sk_model = estimator,
-                    artifact_path = cfg.model.artifact_path,
-                    signature = signature,
-                    input_example = X_train.iloc[0].to_numpy(),
-                    registered_model_name = cfg.model.model_name,
-                    pyfunc_predict_fn = cfg.model.pyfunc_predict_fn
+                    sk_model=estimator,
+                    artifact_path=cfg['model']['artifact_path'],
+                    signature=signature,
+                    input_example=X_train_np[0],
+                    registered_model_name=cfg['model']['model_name'],
+                    pyfunc_predict_fn=cfg['model']['pyfunc_predict_fn']
                 )
 
                 model_uri = model_info.model_uri
                 loaded_model = mlflow.sklearn.load_model(model_uri=model_uri)
 
-                predictions = loaded_model.predict(X_test) # type: ignore
-        
-                eval_data = pd.DataFrame(y_test)
-                eval_data.columns = ["label"]
-                eval_data["predictions"] = predictions
+                X_test_np = X_test.to_numpy().astype(np.float32) if not isinstance(X_test, np.ndarray) else X_test.astype(np.float32)
+                predictions = estimator.predict(X_test_np).reshape(-1)
+                y_test_np = y_test_np.reshape(-1)
 
-                results = mlflow.evaluate(
-                    data=eval_data,
+                # Use mlflow.evaluate to log metrics and artifacts
+                eval_result = mlflow.evaluate(
+                    model=model_uri,  # Use the model URI
+                    data=X_test_np,
+                    targets=y_test_np,
                     model_type="regressor",
-                    targets="label",
-                    predictions="predictions",
-                    evaluators=["default"]
+                    evaluators=["default"],
                 )
+                mlflow.log_metrics(eval_result["metrics"])
 
-                print(f"metrics:\n{results.metrics}")
-            
-            # mlflow.end_run()  
-    
-    # mlflow.end_run()
+                eval_data = pd.DataFrame({'label': y_test_np, 'predictions': predictions})
+                eval_data.to_csv(f'child_predictions_{index}.csv', index=False)
+                mlflow.log_artifact(f'child_predictions_{index}.csv')
+
+                print(f"Logged child run {index} for model {class_name}")
 
 
 def train(X_train, y_train, cfg):
+    input_dim = X_train.shape[1]
+    
+    model_cfg = cfg['model']
+    
+    if model_cfg['model_name'] == 'model_1':
+        module = Model1
+    elif model_cfg['model_name'] == 'model_2':
+        module = Model2
+    else:
+        raise ValueError("Invalid model name in configuration")
+    
+    net = NeuralNetRegressor(
+        module=module,
+        module__input_dim=input_dim,
+        max_epochs=model_cfg['params']['epochs'][0],
+        lr=model_cfg['params']['learning_rate'][0],
+        batch_size=model_cfg['params']['batch_size'][0],
+        optimizer=optim.Adam,
+        criterion=nn.MSELoss,
+        iterator_train__shuffle=True,
+        device='cuda' if torch.cuda.is_available() else 'cpu'
+    )
 
-    # Define the model hyperparameters
-    params = cfg.model.params
+    param_grid = {
+        'lr': model_cfg['params']['learning_rate'],
+        'module__dropout_rate': model_cfg['params']['dropout_rate'],
+        'batch_size': model_cfg['params']['batch_size'],
+        'max_epochs': model_cfg['params']['epochs']
+    }
 
-    # Train the model
-    module_name = cfg.model.module_name # e.g. "sklearn.linear_model"
-    class_name  = cfg.model.class_name # e.g. "LogisticRegression"
+    X_train = X_train.to_numpy().astype(np.float32) if not isinstance(X_train, np.ndarray) else X_train.astype(np.float32)
+    y_train = y_train.to_numpy().astype(np.float32) if not isinstance(y_train, np.ndarray) else y_train.astype(np.float32)
 
-    # We will create the estimator at runtime
-    import importlib
-
-    # Load "module.submodule.MyClass"
-    class_instance = getattr(importlib.import_module(module_name), class_name)
-
-    estimator = class_instance(**params)
-
-    # Grid search with cross validation
-    from sklearn.model_selection import StratifiedKFold
-    cv = StratifiedKFold(n_splits=cfg.model.folds, random_state=cfg.random_state, shuffle=True)
-
-    param_grid = dict(params)
-
-    scoring = list(cfg.model.metrics.values()) # ['balanced_accuracy', 'f1_weighted', 'precision', 'recall', 'roc_auc']
-
-    evaluation_metric = cfg.model.evaluation_metric
-
+    scoring = make_scorer(mean_squared_error, squared=False)
     gs = GridSearchCV(
-        estimator = estimator,
-        param_grid = param_grid,
-        scoring = scoring,
-        n_jobs = cfg.cv_n_jobs,
-        refit = evaluation_metric,
-        cv = cv,
-        verbose = 1,
-        return_train_score = True
+        estimator=net,
+        param_grid=param_grid,
+        scoring=scoring,
+        n_jobs=model_cfg['cv_n_jobs'],
+        refit=True,
+        cv=model_cfg['folds'],
+        verbose=1,
+        return_train_score=True
     )
 
     gs.fit(X_train, y_train)

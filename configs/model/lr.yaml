@@ -1,15 +1,19 @@
-model_name: linear_regression
-artifact_path: basic_lr
+model_name: model_1
+module_name: src.model  # Add this line to specify the module
+artifact_path: deep_model_1
 
 tag_key: "model"
-tag_value: "basic LR"
-
-module_name: "sklearn.linear_model"
-class_name: "SGDRegressor"
+tag_value: "deep model 1"
 
 params:
-  penalty: ['l1', 'l2']
-  # solver: ["saga", "lbfgs", "liblinear"]
-  max_iter: [2]
-  random_state: [88] #, 100, 44]
-  # C: [0.1, 0.5, 0.9]
+  learning_rate: [0.001] #, 0.05, 0.01]
+  dropout_rate: [0.0] #, 0.2, 0.5]
+  batch_size: [16] #, 32, 64]
+  epochs: [1]
+
+folds: 5
+random_state: 42
+cv_n_jobs: 1
+metrics:
+  rmse: 'neg_root_mean_squared_error'
+evaluation_metric: 'rmse'

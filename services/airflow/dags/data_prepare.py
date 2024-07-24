@@ -1,7 +1,7 @@
 import os
 
 BASE_PATH = os.path.expandvars("$PROJECTPATH")
-# BASE_PATH = "/home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project"
+BASE_PATH = "/home/kamil/Desktop/MS01/summer/MLOP/mlops-sum24-project"
 
 import sys
 sys.path.append(BASE_PATH)
@@ -26,8 +26,8 @@ def extract()-> Tuple[
                                        tags=["data_preparation"])]
                     ]:
     
-    df, version = extract_data(os.path.join(BASE_PATH, "data", "samples", "sample.csv"))
-
+    df, version = extract_data(BASE_PATH)
+    print("aaaaaaA", df.shape)
     return df, version
 
 @step(enable_cache=False)
@@ -42,6 +42,7 @@ def transform(df: pd.DataFrame)-> Tuple[
 
     # Your data transformation code
     X, y = transform_data(df)
+    print("bbbbbbbb", X.shape, y.shape)
 
     return X, y
 
@@ -56,7 +57,7 @@ def validate(X:pd.DataFrame,
                                            tags=["data_preparation"])]
                                     ]:
 
-    X, y = validate_features(X, y)
+    X, y = validate_transformed_data(X, y)
     
     return X, y
 
