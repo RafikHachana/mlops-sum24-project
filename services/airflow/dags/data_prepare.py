@@ -1,7 +1,8 @@
 import os
 
 BASE_PATH = os.path.expandvars("$PROJECTPATH")
-# BASE_PATH = "/home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project"
+BASE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 import sys
 sys.path.append(BASE_PATH)
@@ -26,7 +27,7 @@ def extract()-> Tuple[
                                        tags=["data_preparation"])]
                     ]:
     
-    df, version = extract_data(os.path.join(BASE_PATH, "data", "samples", "sample.csv"))
+    df, version = extract_data(os.path.join(BASE_PATH))
 
     return df, version
 
@@ -56,7 +57,7 @@ def validate(X:pd.DataFrame,
                                            tags=["data_preparation"])]
                                     ]:
 
-    X, y = validate_features(X, y)
+    X, y = validate_transformed_data(X, y)
     
     return X, y
 

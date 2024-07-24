@@ -27,14 +27,10 @@ import zenml
 def load_features_training(name, version, size = 1):
     client = Client()
     l = client.list_artifact_versions(name = name, tag = version, sort_by="version").items
-    # print(l)
     l.sort(key=lambda x: int(x.version), reverse=True)
 
-    # print("Choosing this artifact", [x.id for x in l])
 
-    # print("list of artifacts: ", l)
 
-    # df = client.get_artifact_version('99ce7f88-b396-42c0-8e0d-86a576011216').load()
     df = l[0].load()
     if size < 1:
         df = df.sample(frac = size, random_state = 88)

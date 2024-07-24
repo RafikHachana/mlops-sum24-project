@@ -9,7 +9,6 @@ import pandas as pd
 import mlflow
 import mlflow.sklearn
 import importlib
-from sklearn.preprocessing import StandardScaler
 
 def train(train_data, val_data):
     # Extract features and labels
