@@ -46,3 +46,5 @@ t2 = BashOperator(
         bash_command=f'python {PROJECT_ROOT}/data/extract_data.py',
         dag=dag
 )
+
+t1 >> t2
