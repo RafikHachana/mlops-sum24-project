@@ -24,4 +24,4 @@ jobs:
     - name: Validate model
       run: |
         python3 src/sample_and_validate.py
-        mlflow run . -e validate --env-manager=local
+        python3 src/validate_champion.py
