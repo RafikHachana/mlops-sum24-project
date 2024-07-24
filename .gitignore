@@ -16,7 +16,6 @@ datastore
 .vscode
 outputs
 services/zenml
-mlruns
 multirun
 venv*
 

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/25258fec81484d34906fe9c97591ff99/artifacts
+end_time: 1721813921969
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 25258fec81484d34906fe9c97591ff99
+run_name: powerful-lark-30
+run_uuid: 25258fec81484d34906fe9c97591ff99
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721813917397
+status: 3
+tags: []
+user_id: rafik

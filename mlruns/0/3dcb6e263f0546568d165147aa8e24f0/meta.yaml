@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/3dcb6e263f0546568d165147aa8e24f0/artifacts
+end_time: 1721813466766
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 3dcb6e263f0546568d165147aa8e24f0
+run_name: orderly-seal-266
+run_uuid: 3dcb6e263f0546568d165147aa8e24f0
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721813463253
+status: 4
+tags: []
+user_id: rafik

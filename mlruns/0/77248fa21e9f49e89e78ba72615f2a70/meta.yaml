@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/77248fa21e9f49e89e78ba72615f2a70/artifacts
+end_time: 1721815594815
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 77248fa21e9f49e89e78ba72615f2a70
+run_name: dazzling-skink-605
+run_uuid: 77248fa21e9f49e89e78ba72615f2a70
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721815588163
+status: 4
+tags: []
+user_id: rafik

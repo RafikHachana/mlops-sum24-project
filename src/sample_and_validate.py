@@ -1,4 +1,8 @@
-from data import sample_data, validate_initial_data, run_checkpoint
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from src.data import sample_data, validate_initial_data, run_checkpoint
 
 
 if __name__ == '__main__':

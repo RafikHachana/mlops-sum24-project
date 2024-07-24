@@ -1,0 +1,8 @@
+digest: 2bef4556
+name: dataset
+profile: '{"num_rows": 11, "num_elements": 22}'
+schema: '{"mlflow_colspec": [{"type": "long", "name": "label", "required": true},
+  {"type": "double", "name": "predictions", "required": true}]}'
+source: '{"tags": {"mlflow.user": "rafik", "mlflow.source.name": "src/main.py", "mlflow.source.type":
+  "LOCAL"}}'
+source_type: code

@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rafik/Documents/InnoUni/sum24/mlops/mlops-sum24-project/mlruns/0/dbacd3049bb94ffea8abe577a94836e7/artifacts
+end_time: 1721817151617
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: dbacd3049bb94ffea8abe577a94836e7
+run_name: thundering-newt-41
+run_uuid: dbacd3049bb94ffea8abe577a94836e7
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1721816807656
+status: 4
+tags: []
+user_id: rafik

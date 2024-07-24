@@ -3,7 +3,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import hydra
 from omegaconf import DictConfig
-from src.data import extract_data_training, load_features_training
+from src.data import load_features_training
 from src.model import train, evaluate, log_metadata
 
 
