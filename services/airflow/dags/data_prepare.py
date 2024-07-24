@@ -43,6 +43,7 @@ def transform(df: pd.DataFrame)-> Tuple[
 
     # Your data transformation code
     X, y = transform_data(df)
+    print("bbbbbbbb", X.shape, y.shape)
 
     return X, y
 
