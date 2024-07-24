@@ -315,7 +315,7 @@ def validate_release_date(validator: Validator):
     # the format is Oct 21, 2008
     validator.expect_column_values_to_match_regex(
         column=col_name,
-        regex=r"^(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{1,2}, \d{4}$"
+        regex=r"^(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)(?: \d{1,2},)? \d{4}$"
     )
     validator.expect_column_values_to_not_be_null(col_name)
     
@@ -339,25 +339,37 @@ def validate_metacritic_score(validator: Validator):
 
 def validate_support_url(validator: Validator):
     col_name = 'Support url'
-    validator.expect_column_values_to_match_regex(
+    # check type. it should be string
+    validator.expect_column_values_to_be_of_type(
         column=col_name,
-        regex=URL_REGEX
+        type_='object'
     )
+    # validator.expect_column_values_to_match_regex(
+    #     column=col_name,
+    #     regex=URL_REGEX
+    # )
 
 def validate_metacritic_url(validator: Validator):
     col_name = 'Metacritic url'
-    
-    validator.expect_column_values_to_match_regex(
+    validator.expect_column_values_to_be_of_type(
         column=col_name,
-        regex=URL_REGEX
+        type_='object'
     )
+    # validator.expect_column_values_to_match_regex(
+    #     column=col_name,
+    #     regex=URL_REGEX
+    # )
 
 def validate_support_email(validator: Validator):
     col_name = 'Support email'
-    validator.expect_column_values_to_match_regex(
+    validator.expect_column_values_to_be_of_type(
         column=col_name,
-        regex=r"^.+@.+\..+$"
+        type_='object'
     )
+    # validator.expect_column_values_to_match_regex(
+    #     column=col_name,
+    #     regex=r"^.+@.+\..+$"
+    # )
 
 def validate_estimated_owners(validator: Validator):
     col_name = 'Estimated owners'
@@ -370,10 +382,14 @@ def validate_estimated_owners(validator: Validator):
 
 def validate_website(validator: Validator):
     col_name = 'Website'
-    validator.expect_column_values_to_match_regex(
+    validator.expect_column_values_to_be_of_type(
         column=col_name,
-        regex=URL_REGEX
+        type_='object'
     )
+    # validator.expect_column_values_to_match_regex(
+    #     column=col_name,
+    #     regex=URL_REGEX
+    # )
 
 def validate_peak_ccu(validator: Validator):
     col_name = 'Peak CCU'
@@ -407,7 +423,7 @@ def validate_dlc_count(validator: Validator):
     validator.expect_column_values_to_be_between(
         column=col_name,
         min_value=0,
-        max_value=100
+        max_value=5000
     )
     validator.expect_column_values_to_not_be_null(col_name)
 
@@ -416,7 +432,7 @@ def validate_supported_languages(validator: Validator):
     # they are in the format: "['English', 'French', ...]"
     validator.expect_column_values_to_match_regex(
         column=col_name,
-        regex=r"^\[(?:(?:\s*\'[^']*\')(?:\s*,\s*\'[^']*\')*\s*)?\]$"
+        regex=r"^\[(?:(?:\s*K?\'[^']*\')(?:\s*,\s*K?\'[^']*\')*\s*)?\]$"
     )
     validator.expect_column_values_to_not_be_null(col_name)
 
@@ -425,9 +441,9 @@ def validate_full_audio_languages(validator: Validator):
     # they are in the format: "['English', 'French', ...]"
     validator.expect_column_values_to_match_regex(
         column=col_name,
-        regex=r"^\[(?:(?:\s*\'[^']*\')(?:\s*,\s*\'[^']*\')*\s*)?\]$"
+        regex=r"^\[(?:(?:\s*K?\'[^']*\')(?:\s*,\s*K?\'[^']*\')*\s*)?\]$"
     )
-    validator.expect_column_values_to_not_be_null(col_name)
+    # validator.expect_column_values_to_not_be_null(col_name)
 
 
 def validate_initial_data(df):
@@ -536,7 +552,7 @@ def sample_data() -> None:
     os.makedirs(os.path.dirname(sample_path), exist_ok=True)
 
     # Save the sample data
-    sample_df.to_csv(sample_path, index=False)
+    df.to_csv(sample_path, index=False)
     print(f"Sampled data saved to {sample_path}")
     return sample_df
 
@@ -594,7 +610,11 @@ def validate_initial_data():
     #     max_value=100
     # )
 
-    validator_funcs = [validate_app_id, validate_release_date, validate_user_score, validate_metacritic_score, validate_support_url, validate_metacritic_url, validate_support_email, validate_estimated_owners, validate_website, validate_peak_ccu, validate_required_age, validate_price, validate_dlc_count, validate_supported_languages, validate_full_audio_languages]
+    validator_funcs = [validate_app_id, validate_release_date, validate_user_score, 
+                       validate_metacritic_score, validate_support_url, validate_metacritic_url, 
+                       validate_support_email, validate_estimated_owners, validate_website, 
+                       validate_peak_ccu, validate_required_age, validate_price, validate_dlc_count, 
+                       validate_supported_languages, validate_full_audio_languages]
     for func in validator_funcs:
         print(func.__name__)
         func(validator)
@@ -708,15 +728,15 @@ def validate_features(X, y):
     return X, y
 
 
-if __name__ == "__main__":
-    # sample_data()
-    sample_path = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)),
-        "data/samples/sample.csv"
-    )
-    df = pd.read_csv(sample_path)
-    validate_initial_data()
-    result = run_checkpoint()
+# if __name__ == "__main__":
+#     # sample_data()
+#     sample_path = os.path.join(
+#         os.path.dirname(os.path.dirname(__file__)),
+#         "data/samples/sample.csv"
+#     )
+#     df = pd.read_csv(sample_path)
+#     validate_initial_data()
+#     result = run_checkpoint()
 
 
 

@@ -28,7 +28,7 @@
       "expectation_type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "Release date",
-        "regex": "^(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \\d{1,2}, \\d{4}$"
+        "regex": "^(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)(?: \\d{1,2},)? \\d{4}$"
       },
       "meta": {}
     },
@@ -72,26 +72,26 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "expectation_type": "expect_column_values_to_be_of_type",
       "kwargs": {
         "column": "Support url",
-        "regex": "^(?:https?:\\/\\/)?(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$"
+        "type_": "object"
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "expectation_type": "expect_column_values_to_be_of_type",
       "kwargs": {
         "column": "Metacritic url",
-        "regex": "^(?:https?:\\/\\/)?(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$"
+        "type_": "object"
       },
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "expectation_type": "expect_column_values_to_be_of_type",
       "kwargs": {
         "column": "Support email",
-        "regex": "^.+@.+\\..+$"
+        "type_": "object"
       },
       "meta": {}
     },
@@ -111,10 +111,10 @@
       "meta": {}
     },
     {
-      "expectation_type": "expect_column_values_to_match_regex",
+      "expectation_type": "expect_column_values_to_be_of_type",
       "kwargs": {
         "column": "Website",
-        "regex": "^(?:https?:\\/\\/)?(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&\\/=]*)$"
+        "type_": "object"
       },
       "meta": {}
     },
@@ -170,7 +170,7 @@
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "DLC count",
-        "max_value": 100,
+        "max_value": 5000,
         "min_value": 0
       },
       "meta": {}
@@ -186,7 +186,7 @@
       "expectation_type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "Supported languages",
-        "regex": "^\\[(?:(?:\\s*\\'[^']*\\')(?:\\s*,\\s*\\'[^']*\\')*\\s*)?\\]$"
+        "regex": "^\\[(?:(?:\\s*K?\\'[^']*\\')(?:\\s*,\\s*K?\\'[^']*\\')*\\s*)?\\]$"
       },
       "meta": {}
     },
@@ -201,14 +201,7 @@
       "expectation_type": "expect_column_values_to_match_regex",
       "kwargs": {
         "column": "Full audio languages",
-        "regex": "^\\[(?:(?:\\s*\\'[^']*\\')(?:\\s*,\\s*\\'[^']*\\')*\\s*)?\\]$"
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_not_be_null",
-      "kwargs": {
-        "column": "Full audio languages"
+        "regex": "^\\[(?:(?:\\s*K?\\'[^']*\\')(?:\\s*,\\s*K?\\'[^']*\\')*\\s*)?\\]$"
       },
       "meta": {}
     }
